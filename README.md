@@ -30,6 +30,7 @@ A website/portal to get collective information on pet medicine including informa
 - Nodemon (automatic Node.js server restart)
 - Morgan (middleware logger)
 - dotenv (env files)
+- Postman (API testing/Documentation)
   
   
 
