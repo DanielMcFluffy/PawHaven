@@ -1,3 +1,73 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+
+  .bg-0 {
+    background-image: radial-gradient(#FEFEFE, #EDE8F5);
+  }
+
+  .bg-1 {
+    background-color: #EDE8F5;  
+  }
+
+  .bg-2 {
+    background-color: #ADBBDA;
+  }
+  
+  .bg-3 {
+    background-color: #8697C4;
+  }
+
+  .bg-4 {
+    background-color: #7091E6;
+  }
+
+  .bg-5 {
+    background-color: #3D52A0;
+  }
+
+  .font-1 {
+    color: #212427;
+  }
+
+  .font-2 {
+    color: #FEFEFE;
+  }
+
+  .font-active {
+    color: #2F80ED;
+  }
+
+  .font-info {
+    color: #808080;
+  }
+
+}
+
+@layer components {
+  .btn {
+    background-color: #2F80ED;
+    border-radius: 2rem;
+    padding: 0.3rem 1rem;
+    font-weight: 500;
+    color: #FEFEFE;
+
+  }
+
+  .btn:hover {
+    background-color: #2563eb;
+  }
+
+  .btn-secondary {
+    background-color: #FEFEFE;
+    color: #2F80ED;
+    border-color: #2F80ED;
+    border-width: 1px;
+  }
+
+  .btn-secondary:hover {
+    background-color: #e2e8f0;
+  }
+}

@@ -12,12 +12,48 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as landingPageHomeImport } from './routes/(landing-page)/home'
+import { Route as authRegisterImport } from './routes/(auth)/register'
+import { Route as authLoginImport } from './routes/(auth)/login'
+import { Route as landingPageHomeServiceImport } from './routes/(landing-page)/home.service'
+import { Route as landingPageHomeMainImport } from './routes/(landing-page)/home.main'
+import { Route as landingPageHomeAboutImport } from './routes/(landing-page)/home.about'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const landingPageHomeRoute = landingPageHomeImport.update({
+  path: '/home',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authRegisterRoute = authRegisterImport.update({
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authLoginRoute = authLoginImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const landingPageHomeServiceRoute = landingPageHomeServiceImport.update({
+  path: '/service',
+  getParentRoute: () => landingPageHomeRoute,
+} as any)
+
+const landingPageHomeMainRoute = landingPageHomeMainImport.update({
+  path: '/main',
+  getParentRoute: () => landingPageHomeRoute,
+} as any)
+
+const landingPageHomeAboutRoute = landingPageHomeAboutImport.update({
+  path: '/about',
+  getParentRoute: () => landingPageHomeRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -31,12 +67,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/(auth)/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterImport
+      parentRoute: typeof rootRoute
+    }
+    '/(landing-page)/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof landingPageHomeImport
+      parentRoute: typeof rootRoute
+    }
+    '/(landing-page)/home/about': {
+      id: '/home/about'
+      path: '/about'
+      fullPath: '/home/about'
+      preLoaderRoute: typeof landingPageHomeAboutImport
+      parentRoute: typeof landingPageHomeImport
+    }
+    '/(landing-page)/home/main': {
+      id: '/home/main'
+      path: '/main'
+      fullPath: '/home/main'
+      preLoaderRoute: typeof landingPageHomeMainImport
+      parentRoute: typeof landingPageHomeImport
+    }
+    '/(landing-page)/home/service': {
+      id: '/home/service'
+      path: '/service'
+      fullPath: '/home/service'
+      preLoaderRoute: typeof landingPageHomeServiceImport
+      parentRoute: typeof landingPageHomeImport
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute })
+export const routeTree = rootRoute.addChildren({
+  IndexRoute,
+  authLoginRoute,
+  authRegisterRoute,
+  landingPageHomeRoute: landingPageHomeRoute.addChildren({
+    landingPageHomeAboutRoute,
+    landingPageHomeMainRoute,
+    landingPageHomeServiceRoute,
+  }),
+})
 
 /* prettier-ignore-end */
 
@@ -46,11 +133,40 @@ export const routeTree = rootRoute.addChildren({ IndexRoute })
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/login",
+        "/register",
+        "/home"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/login": {
+      "filePath": "(auth)/login.tsx"
+    },
+    "/register": {
+      "filePath": "(auth)/register.tsx"
+    },
+    "/home": {
+      "filePath": "(landing-page)/home.tsx",
+      "children": [
+        "/home/about",
+        "/home/main",
+        "/home/service"
+      ]
+    },
+    "/home/about": {
+      "filePath": "(landing-page)/home.about.tsx",
+      "parent": "/home"
+    },
+    "/home/main": {
+      "filePath": "(landing-page)/home.main.tsx",
+      "parent": "/home"
+    },
+    "/home/service": {
+      "filePath": "(landing-page)/home.service.tsx",
+      "parent": "/home"
     }
   }
 }
