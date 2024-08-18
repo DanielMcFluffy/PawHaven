@@ -74,10 +74,9 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
           </Link>
         </div>
         <Link
-          to='/register'
+          to='/login'
           className='btn btn-secondary'
-        >
-          Register
+        >Login
         </Link>
       </div>
       {/* mobile toolbar */}
@@ -114,11 +113,11 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
             About
           </Link>
           <Link 
-            to='/register'
+            to='/login'
             className='hover:bg-slate-200 px-3 py-1.5'
             activeProps={activeProps}
           >
-            Register
+            Login
           </Link>
           </div>
         </div>

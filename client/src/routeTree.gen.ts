@@ -13,7 +13,6 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as landingPageHomeImport } from './routes/(landing-page)/home'
-import { Route as authRegisterImport } from './routes/(auth)/register'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as landingPageHomeServiceImport } from './routes/(landing-page)/home.service'
 import { Route as landingPageHomeMainImport } from './routes/(landing-page)/home.main'
@@ -28,11 +27,6 @@ const IndexRoute = IndexImport.update({
 
 const landingPageHomeRoute = landingPageHomeImport.update({
   path: '/home',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const authRegisterRoute = authRegisterImport.update({
-  path: '/register',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,13 +68,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginImport
       parentRoute: typeof rootRoute
     }
-    '/(auth)/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof authRegisterImport
-      parentRoute: typeof rootRoute
-    }
     '/(landing-page)/home': {
       id: '/home'
       path: '/home'
@@ -117,7 +104,6 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   authLoginRoute,
-  authRegisterRoute,
   landingPageHomeRoute: landingPageHomeRoute.addChildren({
     landingPageHomeAboutRoute,
     landingPageHomeMainRoute,
@@ -135,7 +121,6 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/login",
-        "/register",
         "/home"
       ]
     },
@@ -144,9 +129,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/login": {
       "filePath": "(auth)/login.tsx"
-    },
-    "/register": {
-      "filePath": "(auth)/register.tsx"
     },
     "/home": {
       "filePath": "(landing-page)/home.tsx",
