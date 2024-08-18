@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { BsXLg } from "react-icons/bs";
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useForm } from '../../hooks/useForm';
+import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../validation';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: Form,
@@ -10,6 +12,40 @@ export const Route = createFileRoute('/(auth)/login')({
 // Not really readable, just wanted to see how tailwind css could write a 2-in-1 form -- better to split this into 2 forms
 function Form() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [loginFormValue, setLoginFormValue] = useState<TLoginForm>({
+    username: '',
+    password: ''
+  })
+  const [registerFormValue, setRegisterFormValue] = useState<TRegisterForm>({
+    username: '',
+    password: '',
+    email: '',
+  })
+
+  const loginFormResult = useForm(loginFormValidation, loginFormValue);
+  const registerFormResult = useForm(registerFormValidation, registerFormValue);
+
+  const { error: loginError, formattedError: loginErrorMessage } = loginFormResult;
+  const { error: registerError, formattedError: registerErrorMessage } = registerFormResult;
+
+  const [usernameTouched, setUsernameTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+
+  const clearForm = () => {
+    setLoginFormValue({
+      username: '',
+      password: ''
+    });
+    setRegisterFormValue({
+      username: '',
+      password: '',
+      email: ''
+    });
+    setUsernameTouched(false);
+    setPasswordTouched(false);
+    setEmailTouched(false);
+  }
 
   return(
     <>
@@ -22,7 +58,10 @@ function Form() {
           >
             {showRegisterModal ? 'Create an Account' : 'Login'}
             {showRegisterModal && (<button
-              onClick={() => setShowRegisterModal(x => !x)}
+              onClick={() => {
+                clearForm();
+                setShowRegisterModal(x => !x);
+              }}
               className='absolute right-4 top-4'
             ><BsXLg/>
             </button>)}
@@ -33,22 +72,58 @@ function Form() {
               <label 
               className='font-info text-sm'
               htmlFor="username">Username</label>
-              <input type="text" id='username' className=' border rounded px-2 py-1 focus:bg-slate-100 w-full' />
+              <input type="text" id='username' className=' border rounded px-2 py-1 focus:bg-slate-100 w-full'
+              value={showRegisterModal ? registerFormValue.username : loginFormValue.username}
+              onChange={(e) => showRegisterModal ?
+                setRegisterFormValue(x => ({...x, username: e.target.value})) :
+                setLoginFormValue(x => ({...x, username: e.target.value}))
+              }
+              onBlur={() => setUsernameTouched(true)} />
+              { loginError && usernameTouched && <div
+                className='text-xs text-red-500'
+              >
+                {loginErrorMessage?.username?._errors[0]}
+              </div>}
             </div>
             <div className='flex flex-col gap-2 col-span-2'>
               <label 
               className='font-info text-sm'
               htmlFor="password">Password</label>
-              <input type="text" id='password' className=' border rounded px-2 py-1 focus:bg-slate-100 w-full' />
+              <input type="text" id='password' className=' border rounded px-2 py-1 focus:bg-slate-100 w-full'
+              value={showRegisterModal ? registerFormValue.password : loginFormValue.password}
+              onChange={(e) => showRegisterModal ?
+                setRegisterFormValue(x => ({...x, password: e.target.value})) :
+                setLoginFormValue(x => ({...x, password: e.target.value}))
+              }
+              onBlur={() => setPasswordTouched(true)} />
+              { loginError && passwordTouched && <div
+                className='text-xs text-red-500'
+              >
+                {loginErrorMessage?.password?._errors[0]}
+              </div>}
             </div>
           </div>
-          {showRegisterModal && (<div className='flex flex-col gap-2'>
+          {showRegisterModal && 
+          <div className='flex flex-col gap-2'>
             <label 
             className='font-info text-sm'
             htmlFor="email">Email</label>
             <input type="text" id='email' 
-            className='w-full border rounded px-2 py-1 focus:bg-slate-100'/>
-          </div>) }
+            className='w-full border rounded px-2 py-1 focus:bg-slate-100'
+            value={registerFormValue.email}
+            onChange={(e) => showRegisterModal ?
+              setRegisterFormValue(x => ({...x, email: e.target.value})) :
+              undefined
+            }
+            onBlur={() => setEmailTouched(true)}/>
+              { registerError && emailTouched && <div
+                className='text-xs text-red-500'
+              >
+                {registerErrorMessage?.email?._errors[0]}
+              </div>}
+          </div>
+          
+         }
           <button
             className='w-full btn'
           >{showRegisterModal ? 'Register' : 'Login'}

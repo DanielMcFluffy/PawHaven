@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as landingPageHomeImport } from './routes/(landing-page)/home'
+import { Route as authenticatedDashboardImport } from './routes/(authenticated)/dashboard'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as landingPageHomeServiceImport } from './routes/(landing-page)/home.service'
 import { Route as landingPageHomeMainImport } from './routes/(landing-page)/home.main'
@@ -27,6 +28,11 @@ const IndexRoute = IndexImport.update({
 
 const landingPageHomeRoute = landingPageHomeImport.update({
   path: '/home',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authenticatedDashboardRoute = authenticatedDashboardImport.update({
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -68,6 +74,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginImport
       parentRoute: typeof rootRoute
     }
+    '/(authenticated)/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof authenticatedDashboardImport
+      parentRoute: typeof rootRoute
+    }
     '/(landing-page)/home': {
       id: '/home'
       path: '/home'
@@ -104,6 +117,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   authLoginRoute,
+  authenticatedDashboardRoute,
   landingPageHomeRoute: landingPageHomeRoute.addChildren({
     landingPageHomeAboutRoute,
     landingPageHomeMainRoute,
@@ -121,6 +135,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/login",
+        "/dashboard",
         "/home"
       ]
     },
@@ -129,6 +144,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/login": {
       "filePath": "(auth)/login.tsx"
+    },
+    "/dashboard": {
+      "filePath": "(authenticated)/dashboard.tsx"
     },
     "/home": {
       "filePath": "(landing-page)/home.tsx",
