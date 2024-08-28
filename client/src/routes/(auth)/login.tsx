@@ -68,7 +68,7 @@ function Form() {
             </div>
           <div className={`gap-4 w-full
             ${showRegisterModal ? 'grid grid-cols-2 sm:grid-cols-4' : 'flex flex-col'}`}>
-            <div className='flex flex-col gap-2 col-span-2'>
+            <div className='flex flex-col col-span-2'>
               <label 
               className='font-info text-sm'
               htmlFor="username">Username</label>
@@ -85,7 +85,7 @@ function Form() {
                 {loginErrorMessage?.username?._errors[0]}
               </div>}
             </div>
-            <div className='flex flex-col gap-2 col-span-2'>
+            <div className='flex flex-col col-span-2'>
               <label 
               className='font-info text-sm'
               htmlFor="password">Password</label>
@@ -104,7 +104,7 @@ function Form() {
             </div>
           </div>
           {showRegisterModal && 
-          <div className='flex flex-col gap-2'>
+          <div className='flex flex-col'>
             <label 
             className='font-info text-sm'
             htmlFor="email">Email</label>
@@ -132,7 +132,10 @@ function Form() {
             className='text-center font-info text-sm'
           >Don't have an account? Register <button 
           className='underline'
-          onClick={() => setShowRegisterModal(x => !x)}
+          onClick={() => {
+            setShowRegisterModal(x => !x);
+            clearForm();
+          }}
           >here</button></div>)}
         </div>
       </div>
