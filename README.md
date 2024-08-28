@@ -17,12 +17,12 @@ A website/portal to get collective information on pet medicine including informa
 
 ### Data Manipulation & Visualisation
 - PostgreSQL
-- Neon (PostgreSQL Cloud Database)
+- Supabase (PostgreSQL Cloud Database)
 
 ### Library (NPM)
 - Tanstack Router (Type-safe routing)
 - Zod (Type-safe schema validation)
-- Massive.js (Object Relational Mapper between Node.js and PostgreSQL)
+- Postgres.js (Postgres Client)
 - Passport.js (Auth)
 - Nodemailer (Email service)
 
