@@ -1,16 +1,19 @@
 import passport from 'passport';
 import express from 'express';
 import {Strategy as LocalStrategy} from 'passport-local';
-import { ErrorResponse } from '../utils/errorResponse';
-import { BaseResponse } from '../utils/BaseResponse';
+import sql from '../db';
+import { login, register } from '../controllers/auth';
 
-
-passport.use(new LocalStrategy((username, password, done) => {
-  if (username === 'Daniel' && password === 'daniel') {
+passport.use(new LocalStrategy(async(username, password, done) => {
+  const user = await sql`
+    SELECT * FROM users
+    WHERE username = ${username}
+    AND password = ${password}
+  `
+  if (!user.length) {
+    return done(null, false);
+  } 
     return done(null, {username: 'Danieldd'})
-  } else {
-    done(null, false)
-  }
 },));
 
 passport.serializeUser((user, done) => {
@@ -23,32 +26,13 @@ passport.deserializeUser((username, done) => {
 
 export const authRouter = express.Router();
 
-authRouter.post('/login', passport.authenticate('local'), (req, res) => {
-  console.log(req.user)
-  console.log(req.session);
-  console.log(req.sessionID)
-  console.log(req.session.id)
-  console.log(req.session.cookie)
+authRouter
+  .route('/login')
+  .post(login);
 
-  const response = new BaseResponse(200, 'Authenticated', {
-    session: req.session,
-    user: req.user,
-    reqAuth: req.isAuthenticated()
-  })
+authRouter
+  .route('/register')
+  .post(register);
 
-  res.status(response.status).json(response)
-})
 
-authRouter.get('/logout', (req, res, next) => {
-
-  if (req.isAuthenticated()) {
-    req.logOut({keepSessionInfo: false}, (err) => {
-      if (err) return next(
-        new ErrorResponse('Something happened', 500)
-      );
-    })
-  } else {
-    res.status(200)
-
-  }
-})
+  

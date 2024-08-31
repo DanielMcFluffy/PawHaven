@@ -1,25 +1,14 @@
 import { configDotenv } from "dotenv";
-import express, { NextFunction } from "express";
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
 import morgan from "morgan";
 import passport from 'passport';
 import session from 'express-session';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { authRouter } from "./routes/authRouter";
 import { errorHandler } from "./middlewares/error";
-import { ErrorResponse } from "./utils/errorResponse";
-import { BaseResponse } from "./utils/BaseResponse";
-import sql from "./db";
+import { usersRouter } from "./routes/usersRouter";
 
-async function getUsersOver() {
-  const users = await sql`
-    SELECT * FROM users
-  `
-  console.log(users);
-  return users
-}
-
-getUsersOver();
 configDotenv({path: ".././config/config.env"})  
 
 const PORT = process.env.PORT;
@@ -27,6 +16,7 @@ const PORT = process.env.PORT;
 const app = express();
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
@@ -43,6 +33,14 @@ app.use(session({
 app.use(passport.authenticate('session'));
 
 app.use('/', authRouter)
+app.get('/data', (req: Request, res: Response) => {
+  console.log('user', req.user);
+  console.log('session', req.session);
+  console.log('sessionID', req.session.id);
+  console.log('authenticated', req.isAuthenticated());
+  console.log(req.cookies);
+})
+app.use('/', usersRouter)
 
 
 app.use(errorHandler);
