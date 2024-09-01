@@ -1,13 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 import passport, { AuthenticateCallback } from "passport";
-import { ErrorResponse } from "../utils/errorResponse";
-import { BaseResponse } from "../utils/BaseResponse";
-import { RegisterRequest } from "../models/RegisterRequest";
+import { ErrorResponse } from "../lib/utils/errorResponse";
+import { BaseResponse } from "../lib/utils/BaseResponse";
 import sql from "../db";
+import { generateSessionToken } from "../lib/utils/crypto";
+import { User } from "../models/User";
+import { loginRequestSchema, registerRequestSchema } from "../lib/validation";
 
 type ParamsAuthenticateCallback = Parameters<AuthenticateCallback>;
 
 export const login = async(req: Request, res: Response, next: NextFunction) => {
+  
+  try {
+    loginRequestSchema.parse(req.body)
+  } catch (error) {
+    next(error)    
+  }
+
   passport.authenticate('local', (...args: ParamsAuthenticateCallback) => {
     const [err, user, info, status] = args;
 
@@ -17,24 +26,58 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
       return next(new ErrorResponse('User doesn\'t exist', 404))
     }
 
-    req.login(user, (err) => {
+    req.login(user, async(err) => {
       if (err) {
         return next(err);
       }
-      const response = new BaseResponse(200, 'Login successful', user)
-      return res.status(response.status).json(response);
-    });
-  })(req, res, next);
+      try {
+
+        const session = await sql`
+          SELECT * FROM sessions
+          WHERE session_id = ${req.sessionID}
+        `
+        if (!session.length) {
+          const sessionToken = generateSessionToken();
+          const sessionData = {
+            expires: req.session.cookie.originalMaxAge
+          };
+          
+          await sql`
+            INSERT INTO sessions (session_id, session_token_id, user_id, data)
+            VALUES (${req.sessionID}, ${sessionToken}, ${(req.user as User).user_id}, ${sql.json(sessionData)})
+            RETURNING *
+          `
+          const response = new BaseResponse(200, 'Login successful', user)
+          return res.status(response.status).json(response);
+        } else {
+            await sql`
+              UPDATE sessions
+              SET expires = ${req.session.cookie.originalMaxAge},
+                  updated_at = NOW()
+              WHERE session_id = ${req.sessionID}
+            `
+          const response = new BaseResponse(200, 'Login successful', user)
+          return res.status(response.status).json(response);
+        }
+
+      } catch (error) {
+        next(error);
+      }
+        
+      });
+    })(req, res, next);
 };
 
 export const register = async(req: Request, res: Response, next: NextFunction) => {
-  const {username, password, email} = req.body as RegisterRequest;
+
+  try {
+  const validation = registerRequestSchema.parse(req.body)
+  const {username, password, email} = validation;
 
   if (!username || !password || !email) {
     return next(new ErrorResponse('Please fill all required fields', 400));
   }
 
-  try {
     const user = await sql`
     INSERT INTO users (username, password, email)
     VALUES (${username}, ${password}, ${email})

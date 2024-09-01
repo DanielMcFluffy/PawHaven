@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { ErrorResponse } from "../utils/errorResponse";
+import { ErrorResponse } from "../lib/utils/errorResponse";
 import sql from "../db";
-import { BaseResponse } from "../utils/BaseResponse";
+import { BaseResponse } from "../lib/utils/BaseResponse";
 
 export const getUsers = async(req: Request, res: Response, next: NextFunction) => {
   const users = await sql`

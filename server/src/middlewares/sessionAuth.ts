@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ErrorResponse } from "../utils/errorResponse";
+import { ErrorResponse } from "../lib/utils/errorResponse";
 
 export const sessionAuth = (req: Request, res: Response, next: NextFunction) => {
   if (!(req.session as any)?.passport?.user?.username) {

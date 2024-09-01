@@ -13,15 +13,15 @@ passport.use(new LocalStrategy(async(username, password, done) => {
   if (!user.length) {
     return done(null, false);
   } 
-    return done(null, {username: 'Danieldd'})
+    return done(null, user[0])
 },));
 
 passport.serializeUser((user, done) => {
   return done(null, user)
 })
 
-passport.deserializeUser((username, done) => {
-  return done(null, username as string)
+passport.deserializeUser((user, done) => {
+  return done(null, user as any)
 })
 
 export const authRouter = express.Router();
