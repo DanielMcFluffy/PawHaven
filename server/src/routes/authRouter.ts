@@ -3,13 +3,20 @@ import express from 'express';
 import {Strategy as LocalStrategy} from 'passport-local';
 import sql from '../db';
 import { login, register } from '../controllers/auth';
+import bcrypt from 'bcrypt';
+import { User } from '../models/User';
 
 passport.use(new LocalStrategy(async(username, password, done) => {
+  
   const user = await sql`
     SELECT * FROM users
     WHERE username = ${username}
-    AND password = ${password}
-  `
+  ` as User[];
+
+  const passwordMatch = await bcrypt.compare(password, user[0].password);
+
+  if (!passwordMatch) return done(null, false);  
+
   if (!user.length) {
     return done(null, false);
   } 
