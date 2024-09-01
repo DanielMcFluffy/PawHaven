@@ -21,9 +21,9 @@ function Home() {
         dropdownOpen={dropdownOpen}
         setDropdownOpen={setDropdownOpen}
       />
-      <div className='h-full px-6 py-4'>
+      <main className='h-full px-6 py-4'>
         <Outlet/>
-      </div>
+      </main>
     </div>
     </>
   )
@@ -46,7 +46,7 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
   return(
     <>
     {/* desktop toolbar */}
-      <div className='flex-row justify-between px-6 py-4 font-info hidden sm:flex'>
+      <header className='flex-row justify-between px-6 py-4 font-info hidden sm:flex'>
         <Link
           to='/home/main'
         >
@@ -78,16 +78,16 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
           className='btn btn-secondary'
         >Login
         </Link>
-      </div>
+      </header>
       {/* mobile toolbar */}
-      <div className='flex sm:hidden justify-between'>
+      <header className='flex sm:hidden justify-between'>
         <Link
           to='/home/main'
           className='p-4'
         >
           Logo
         </Link>
-        <div className={`relative px-4 ${dropdownOpen ? 'bg-slate-300' : ''}`}>
+        <nav className={`relative px-4 ${dropdownOpen ? 'bg-slate-300' : ''}`}>
           <button
             className='align-middle h-full'
             onClick={() => setDropdownOpen(x => !x)}
@@ -120,8 +120,8 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
             Login
           </Link>
           </div>
-        </div>
-      </div>
+        </nav>
+      </header>
     </>
   )
 }

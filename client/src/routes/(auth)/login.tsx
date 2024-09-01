@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { BsXLg } from "react-icons/bs";
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useForm } from '../../hooks/useForm';
-import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../validation';
+import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../utils/validation';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: Form,
@@ -22,16 +23,17 @@ function Form() {
     email: '',
   })
 
+  
   const loginFormResult = useForm(loginFormValidation, loginFormValue);
   const registerFormResult = useForm(registerFormValidation, registerFormValue);
-
+  
   const { error: loginError, formattedError: loginErrorMessage } = loginFormResult;
   const { error: registerError, formattedError: registerErrorMessage } = registerFormResult;
-
+  
   const [usernameTouched, setUsernameTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
-
+  
   const clearForm = () => {
     setLoginFormValue({
       username: '',
@@ -47,12 +49,18 @@ function Form() {
     setEmailTouched(false);
   }
 
+  const Login = async() => {
+   const res = await useAuth(loginFormValue)
+   console.log(res);
+  }
+  
   return(
     <>
-      <div
+      <AuthToolbar />
+      <main
         className={`flex justify-center items-center 
           ${showRegisterModal ? 'modal' : 'h-dvh bg-0'}`}>
-        <div className={`bg-white ${showRegisterModal ? '' : 'shadow-md'} p-4 rounded flex flex-col gap-4 min-w-[300px]`}>
+        <section className={`bg-white ${showRegisterModal ? '' : 'shadow-md'} p-4 rounded flex flex-col gap-4 min-w-[300px]`}>
           <div
             className='text-2xl '
           >
@@ -65,7 +73,7 @@ function Form() {
               className='absolute right-4 top-4'
             ><BsXLg/>
             </button>)}
-            </div>
+          </div>
           <div className={`gap-4 w-full
             ${showRegisterModal ? 'grid grid-cols-2 sm:grid-cols-4' : 'flex flex-col'}`}>
             <div className='flex flex-col col-span-2'>
@@ -125,6 +133,7 @@ function Form() {
           
          }
           <button
+            onClick={() => Login()}
             className='w-full btn'
           >{showRegisterModal ? 'Register' : 'Login'}
           </button>
@@ -137,11 +146,28 @@ function Form() {
             clearForm();
           }}
           >here</button></div>)}
-        </div>
-      </div>
+        </section>
+      </main>
       {showRegisterModal && createPortal(
         <Form/>, document.body
       )}
+    </>
+  )
+}
+
+const AuthToolbar = () => {
+
+  return(
+    <>
+      <header 
+        className='flex-row justify-between px-6 py-4 font-info bg-0'
+      >
+        <Link
+          to='/home/main'
+        >
+          Logo
+        </Link>
+      </header>
     </>
   )
 }

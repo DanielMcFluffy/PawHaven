@@ -51,7 +51,7 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
             VALUES (${req.sessionID}, ${sessionToken}, ${(req.user as User).user_id}, ${sql.json(sessionData)})
             RETURNING *
           `
-          const response = new BaseResponse(200, 'Login successful', [{user, sessionToken}])
+          const response = new BaseResponse(200, 'Login successful', {user, sessionToken})
           return res.status(response.status).json(response);
         } else {
           const sessionToken = generateSessionToken();
@@ -62,7 +62,7 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
                   updated_at = NOW()
               WHERE session_id = ${req.sessionID}
             `
-          const response = new BaseResponse(200, 'Login successful', [{user, sessionToken}])
+          const response = new BaseResponse(200, 'Login successful', {user, sessionToken})
           return res.status(response.status).json(response);
         }
 
