@@ -50,13 +50,12 @@ function Form() {
   }
 
   const Login = async() => {
-   const res = await useAuth(loginFormValue)
-   console.log(res);
+   await useAuth(loginFormValue).then(console.log)
   }
   
   return(
     <>
-      <AuthToolbar />
+      { !showRegisterModal && <AuthToolbar /> }
       <main
         className={`flex justify-center items-center 
           ${showRegisterModal ? 'modal' : 'h-dvh bg-0'}`}>
@@ -142,8 +141,8 @@ function Form() {
           >Don't have an account? Register <button 
           className='underline'
           onClick={() => {
-            setShowRegisterModal(x => !x);
-            clearForm();
+            !showRegisterModal && setShowRegisterModal(x => !x);
+            !showRegisterModal && clearForm();
           }}
           >here</button></div>)}
         </section>

@@ -8,6 +8,5 @@ export const useAuth = async(loginForm: TLoginForm) => {
   const response = await AxiosPOST<TLoginForm, AuthInfo, Api_POST>('/login', {
     username, password
   })
-
   return response;
 }

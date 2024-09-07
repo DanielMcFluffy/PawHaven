@@ -28,9 +28,9 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     error = new ErrorResponse(error.detail, 409)
   }
 
-  res.status(error.statusCode || 500).json({
+  res.status(error.status || 500).json({
     status: error.status,
-    error: error.message || 'Server Error'
+    message: error.message || 'Server Error'
   });
 };
 

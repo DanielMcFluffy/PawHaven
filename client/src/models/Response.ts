@@ -10,4 +10,6 @@ export type BaseResponse<T> = {
   result: T
 }
 
+export type ErrorResponse = Omit<BaseResponse<unknown>, "result">
+
 export type AuthResponse = BaseResponse<AuthInfo>
