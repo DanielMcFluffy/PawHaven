@@ -50,7 +50,9 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
         <Link
           to='/home/main'
         >
-          Logo
+          <img src='/logo-blue.png' alt="logo"
+            height='220px'
+            width='220px' />
         </Link>
         <div className='flex flex-row gap-8'>
           <Link
@@ -85,7 +87,9 @@ const Toolbar = ({dropdownOpen, setDropdownOpen}: ToolbarProps) => {
           to='/home/main'
           className='p-4'
         >
-          Logo
+          <img src='/logo-blue.png' alt="logo"
+            height='220px'
+            width='220px' />
         </Link>
         <nav className={`relative px-4 ${dropdownOpen ? 'bg-slate-300' : ''}`}>
           <button

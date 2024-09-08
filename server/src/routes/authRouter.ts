@@ -2,7 +2,7 @@ import passport from 'passport';
 import express from 'express';
 import {Strategy as LocalStrategy} from 'passport-local';
 import sql from '../db';
-import { login, register } from '../controllers/auth';
+import { checkSession, login, logout, register } from '../controllers/auth';
 import bcrypt from 'bcrypt';
 import { User } from '../models/User';
 
@@ -41,5 +41,12 @@ authRouter
   .route('/register')
   .post(register);
 
+authRouter
+  .route('/check-session')
+  .get(checkSession)
+
+authRouter
+  .route('/logout')
+  .get(logout)
 
   

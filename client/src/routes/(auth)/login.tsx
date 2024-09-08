@@ -1,10 +1,10 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { BsXLg } from "react-icons/bs";
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useForm } from '../../hooks/useForm';
 import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../utils/validation';
-import { useAuth } from '../../hooks/useAuth';
+import { AxiosPOST } from '../../utils/axiosHttp';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: Form,
@@ -12,6 +12,8 @@ export const Route = createFileRoute('/(auth)/login')({
 
 // Not really readable, just wanted to see how tailwind css could write a 2-in-1 form -- better to split this into 2 forms
 function Form() {
+  const navigate = useNavigate();
+
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [loginFormValue, setLoginFormValue] = useState<TLoginForm>({
     username: '',
@@ -50,8 +52,13 @@ function Form() {
   }
 
   const Login = async() => {
-   await useAuth(loginFormValue).then(console.log)
-  }
+    const {username, password} = loginFormValue;
+    const response = await AxiosPOST('/login', {username, password});
+
+    if (response.status === 200) {
+      navigate({to: '/dashboard'})
+    }
+  };
   
   return(
     <>
@@ -164,7 +171,9 @@ const AuthToolbar = () => {
         <Link
           to='/home/main'
         >
-          Logo
+          <img src='/logo-blue.png' alt="logo"
+            height='220px'
+            width='220px' />
         </Link>
       </header>
     </>

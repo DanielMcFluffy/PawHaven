@@ -10,7 +10,7 @@ TResponse,
 TApi extends Api_GET
 >(url: TApi): Promise<BaseResponse<TResponse> | ErrorResponse > => {
   try {
-    const response = await axios.get(url, {baseURL})
+    const response = await axios.get(url, {baseURL, withCredentials: true})
     return response.data as BaseResponse<TResponse>;
   } catch (error) {
     console.error('Error:', (error as any).response.data);
@@ -24,7 +24,7 @@ TResponse,
 TApi extends Api_POST
 >(url: TApi, request: TRequest): Promise<BaseResponse<TResponse> | ErrorResponse> => {
   try {
-    const response = await axios.post(url, request, {baseURL})
+    const response = await axios.post(url, request, {baseURL, withCredentials: true})
     return response.data as BaseResponse<TResponse>
   } catch (error) {
     console.error('Error:', (error as any).response.data);
@@ -37,7 +37,7 @@ TResponse,
 TApi extends Api_DELETE
 >(url: TApi): Promise<BaseResponse<TResponse> | ErrorResponse> => {
   try {
-    const response = await axios.delete(url, {baseURL})
+    const response = await axios.delete(url, {baseURL, withCredentials: true})
     return response.data as BaseResponse<TResponse>
   } catch (error) {
     console.error('Error:', (error as any).response.data);

@@ -14,13 +14,11 @@ configDotenv({path: ".././config/config.env"})
 type ParamsAuthenticateCallback = Parameters<AuthenticateCallback>;
 
 export const login = async(req: Request, res: Response, next: NextFunction) => {
-  
   try {
     loginRequestSchema.parse(req.body)
   } catch (error) {
     next(error)    
   }
-
   passport.authenticate('local', (...args: ParamsAuthenticateCallback) => {
     const [err, user, info, status] = args;
 
@@ -75,7 +73,6 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
 };
 
 export const register = async(req: Request, res: Response, next: NextFunction) => {
-
   try {
   const validation = registerRequestSchema.parse(req.body)
   const {username, password, email} = validation;
@@ -99,5 +96,28 @@ export const register = async(req: Request, res: Response, next: NextFunction) =
   } catch (error) {
     return next(error);
   }
+}
 
+export const checkSession = async(req: Request, res: Response, next: NextFunction) => {
+  console.log(req.isAuthenticated())
+  try {
+    if (req.isAuthenticated()) {
+      const response = new BaseResponse(200, 'valid session', true);
+      return res.status(response.status).json(response);
+    } else {
+      const response = new BaseResponse(401, 'invalid session', false);
+      return res.status(response.status).json(response);
+    }
+  } catch (error) {
+      return next(error);
+  }
+}
+
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+
+  req.logOut({keepSessionInfo: false}, (err) => {
+    if (err) next(err);
+    const response = new BaseResponse(200, 'Logged out', undefined);
+    return res.status(response.status).json(response);
+  })
 }

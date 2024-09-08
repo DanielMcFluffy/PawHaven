@@ -53,6 +53,7 @@
     padding: 0.3rem 1rem;
     font-weight: 500;
     color: #FEFEFE;
+    align-self: center;
   }
 
   .btn:hover {

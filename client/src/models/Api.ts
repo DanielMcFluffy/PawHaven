@@ -1,5 +1,7 @@
 export type Api_GET = 
 | '/users'
+| '/check-session'
+| '/logout'
 
 export type Api_POST = 
 | '/register'
@@ -11,5 +13,4 @@ export type Api_PUT =
 
 export type Api_DELETE = 
 | '/register'
-| '/login'
 

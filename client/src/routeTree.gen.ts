@@ -13,11 +13,17 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as landingPageHomeImport } from './routes/(landing-page)/home'
-import { Route as authenticatedDashboardImport } from './routes/(authenticated)/dashboard'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as landingPageHomeServiceImport } from './routes/(landing-page)/home.service'
 import { Route as landingPageHomeMainImport } from './routes/(landing-page)/home.main'
 import { Route as landingPageHomeAboutImport } from './routes/(landing-page)/home.about'
+import { Route as authenticateddashboardDashboardImport } from './routes/(authenticated)/(dashboard)/dashboard'
+import { Route as authenticateddashboardDashboardIndexImport } from './routes/(authenticated)/(dashboard)/dashboard.index'
+import { Route as authenticateddashboardDashboardSettingsImport } from './routes/(authenticated)/(dashboard)/dashboard.settings'
+import { Route as authenticateddashboardDashboardProfileImport } from './routes/(authenticated)/(dashboard)/dashboard.profile'
+import { Route as authenticateddashboardDashboardPetsImport } from './routes/(authenticated)/(dashboard)/dashboard.pets'
+import { Route as authenticateddashboardDashboardMedicinesImport } from './routes/(authenticated)/(dashboard)/dashboard.medicines'
+import { Route as authenticateddashboardDashboardAppointmentsImport } from './routes/(authenticated)/(dashboard)/dashboard.appointments'
 
 // Create/Update Routes
 
@@ -28,11 +34,6 @@ const IndexRoute = IndexImport.update({
 
 const landingPageHomeRoute = landingPageHomeImport.update({
   path: '/home',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const authenticatedDashboardRoute = authenticatedDashboardImport.update({
-  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -56,6 +57,54 @@ const landingPageHomeAboutRoute = landingPageHomeAboutImport.update({
   getParentRoute: () => landingPageHomeRoute,
 } as any)
 
+const authenticateddashboardDashboardRoute =
+  authenticateddashboardDashboardImport
+    .update({
+      path: '/dashboard',
+      getParentRoute: () => rootRoute,
+    } as any)
+    .lazy(() =>
+      import('./routes/(authenticated)/(dashboard)/dashboard.lazy').then(
+        (d) => d.Route,
+      ),
+    )
+
+const authenticateddashboardDashboardIndexRoute =
+  authenticateddashboardDashboardIndexImport.update({
+    path: '/',
+    getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
+const authenticateddashboardDashboardSettingsRoute =
+  authenticateddashboardDashboardSettingsImport.update({
+    path: '/settings',
+    getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
+const authenticateddashboardDashboardProfileRoute =
+  authenticateddashboardDashboardProfileImport.update({
+    path: '/profile',
+    getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
+const authenticateddashboardDashboardPetsRoute =
+  authenticateddashboardDashboardPetsImport.update({
+    path: '/pets',
+    getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
+const authenticateddashboardDashboardMedicinesRoute =
+  authenticateddashboardDashboardMedicinesImport.update({
+    path: '/medicines',
+    getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
+const authenticateddashboardDashboardAppointmentsRoute =
+  authenticateddashboardDashboardAppointmentsImport.update({
+    path: '/appointments',
+    getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -74,18 +123,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginImport
       parentRoute: typeof rootRoute
     }
-    '/(authenticated)/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof authenticatedDashboardImport
-      parentRoute: typeof rootRoute
-    }
     '/(landing-page)/home': {
       id: '/home'
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof landingPageHomeImport
+      parentRoute: typeof rootRoute
+    }
+    '/(authenticated)/(dashboard)/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof authenticateddashboardDashboardImport
       parentRoute: typeof rootRoute
     }
     '/(landing-page)/home/about': {
@@ -109,6 +158,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof landingPageHomeServiceImport
       parentRoute: typeof landingPageHomeImport
     }
+    '/(authenticated)/(dashboard)/dashboard/appointments': {
+      id: '/dashboard/appointments'
+      path: '/appointments'
+      fullPath: '/dashboard/appointments'
+      preLoaderRoute: typeof authenticateddashboardDashboardAppointmentsImport
+      parentRoute: typeof authenticateddashboardDashboardImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/medicines': {
+      id: '/dashboard/medicines'
+      path: '/medicines'
+      fullPath: '/dashboard/medicines'
+      preLoaderRoute: typeof authenticateddashboardDashboardMedicinesImport
+      parentRoute: typeof authenticateddashboardDashboardImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/pets': {
+      id: '/dashboard/pets'
+      path: '/pets'
+      fullPath: '/dashboard/pets'
+      preLoaderRoute: typeof authenticateddashboardDashboardPetsImport
+      parentRoute: typeof authenticateddashboardDashboardImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/profile': {
+      id: '/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof authenticateddashboardDashboardProfileImport
+      parentRoute: typeof authenticateddashboardDashboardImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof authenticateddashboardDashboardSettingsImport
+      parentRoute: typeof authenticateddashboardDashboardImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof authenticateddashboardDashboardIndexImport
+      parentRoute: typeof authenticateddashboardDashboardImport
+    }
   }
 }
 
@@ -117,12 +208,20 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   authLoginRoute,
-  authenticatedDashboardRoute,
   landingPageHomeRoute: landingPageHomeRoute.addChildren({
     landingPageHomeAboutRoute,
     landingPageHomeMainRoute,
     landingPageHomeServiceRoute,
   }),
+  authenticateddashboardDashboardRoute:
+    authenticateddashboardDashboardRoute.addChildren({
+      authenticateddashboardDashboardAppointmentsRoute,
+      authenticateddashboardDashboardMedicinesRoute,
+      authenticateddashboardDashboardPetsRoute,
+      authenticateddashboardDashboardProfileRoute,
+      authenticateddashboardDashboardSettingsRoute,
+      authenticateddashboardDashboardIndexRoute,
+    }),
 })
 
 /* prettier-ignore-end */
@@ -135,8 +234,8 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/login",
-        "/dashboard",
-        "/home"
+        "/home",
+        "/dashboard"
       ]
     },
     "/": {
@@ -145,15 +244,23 @@ export const routeTree = rootRoute.addChildren({
     "/login": {
       "filePath": "(auth)/login.tsx"
     },
-    "/dashboard": {
-      "filePath": "(authenticated)/dashboard.tsx"
-    },
     "/home": {
       "filePath": "(landing-page)/home.tsx",
       "children": [
         "/home/about",
         "/home/main",
         "/home/service"
+      ]
+    },
+    "/dashboard": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.tsx",
+      "children": [
+        "/dashboard/appointments",
+        "/dashboard/medicines",
+        "/dashboard/pets",
+        "/dashboard/profile",
+        "/dashboard/settings",
+        "/dashboard/"
       ]
     },
     "/home/about": {
@@ -167,6 +274,30 @@ export const routeTree = rootRoute.addChildren({
     "/home/service": {
       "filePath": "(landing-page)/home.service.tsx",
       "parent": "/home"
+    },
+    "/dashboard/appointments": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.appointments.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/medicines": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.medicines.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/pets": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.pets.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/profile": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.profile.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/settings": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.settings.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.index.tsx",
+      "parent": "/dashboard"
     }
   }
 }
