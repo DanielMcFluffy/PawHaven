@@ -1,6 +1,5 @@
 import { createLazyFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-router'
 import { AxiosGET } from '../../../utils/axiosHttp';
-import { useState } from 'react';
 import { FaHome } from "react-icons/fa";
 import { IconType } from 'react-icons';
 import { CgProfile } from "react-icons/cg";
@@ -24,7 +23,7 @@ function Dashboard() {
     <div className='flex flex-col bg-0 h-dvh'>
       <Toolbar />
       <main className='flex h-full'>
-        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-50 rounded-lg shadow-md'><Outlet /></section>
+        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-50 rounded-xl shadow-md'><Outlet /></section>
       </main>
     </div>
     </>
@@ -32,13 +31,6 @@ function Dashboard() {
 }
 
 const Toolbar = () => {
-  const navigate = useNavigate();
-
-  const logout = async() => {
-    await AxiosGET('/logout')
-    navigate({to: '/home'});
-  }
-
   return(
     <>
     {/* desktop toolbar */}
@@ -50,7 +42,6 @@ const Toolbar = () => {
               height='220px'
               width='220px' />
       </Link>
-      <button onClick={logout} className='btn'>logout</button>
     </header>
       {/* mobile toolbar */}
     <header className='flex sm:hidden justify-between'>
@@ -61,20 +52,24 @@ const Toolbar = () => {
 }
 
 const Sidebar = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const logout = async() => {
+    await AxiosGET('/logout')
+    navigate({to: '/home'});
+  }
+
   return(
     <>
-      <aside className={`bg-2 h-full p-4 relative transition-[width] ${sidebarOpen ? 'w-[20ch]' : 'w-[15ch]'}`}>       
+      <aside className={`bg-0 h-full transition-[width] ease-in-out 'w-[15ch]'`}>       
         
-      <section className='flex flex-col gap-6'>
-          {sidebarButtons.map((x, index) => (
-            <SidebarButtonLink key={index} icon={x.icon} label={x.label} to={x.to} />
+      <section className='flex flex-col'>
+          {sidebarButtons.map((x, index) => ( index < (sidebarButtons.length - 1) ?
+            <SidebarButtonLink key={index} icon={x.icon} label={x.label} to={x.to} /> :
+            <SidebarButtonLink key={index} icon={x.icon} label={x.label} callback={logout} /> 
           ))}
         </section>
-        <button className='absolute right-0 bottom-[50%] bg-slate-500'
-        onClick={() => setSidebarOpen(x => !x)}>
-          {sidebarOpen ? 'close' : 'open'}
-        </button>
       </aside>
     </>
   )
@@ -84,6 +79,7 @@ type SidebarButtonProps = {
   icon: IconType;
   label: string;
   to?: string;
+  callback?: () => void;
 }
 
 const sidebarButtons: SidebarButtonProps[] = [
@@ -96,11 +92,11 @@ const sidebarButtons: SidebarButtonProps[] = [
   {icon: CiLogout, label: 'Logout'},
 ]
 
-const SidebarButton = ({icon, label}: SidebarButtonProps) => {
+const SidebarButton = ({icon, label, callback}: SidebarButtonProps) => {
 
   return (
     <>
-      <button className='flex flex-col justify-center items-center hover:bg-white'>
+      <button className='flex flex-col justify-center items-center hover:bg-slate-300 px-2 py-4 rounded-lg' onClick={callback}>
         <div className=''>
           {React.createElement(icon)}
         </div>
@@ -112,13 +108,21 @@ const SidebarButton = ({icon, label}: SidebarButtonProps) => {
   )
 }
 
-const SidebarButtonLink = ({ icon, label, to }: SidebarButtonProps) => {
+const SidebarActiveProps: React.AnchorHTMLAttributes<HTMLAnchorElement> | (() => React.AnchorHTMLAttributes<HTMLAnchorElement>) | undefined = {
+  style: {
+    boxShadow: '0 4px 4px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ADBBDA',
+    borderRadius: '0.5rem',
+  },
+};
+
+const SidebarButtonLink = ({ icon, label, to, callback }: SidebarButtonProps) => {
   if (!to) {
-    return <SidebarButton icon={icon} label={label} />;
+    return <SidebarButton icon={icon} label={label} callback={callback} />;
   }
 
   return (
-    <Link to={to} className='flex flex-col justify-center items-center hover:bg-white'>
+    <Link to={to} activeProps={SidebarActiveProps} activeOptions={{exact: true}} className='flex flex-col justify-center items-center hover:bg-slate-300 hover:rounded-md px-2 py-4'>
       <div>{React.createElement(icon)}</div>
       <div>{label}</div>
     </Link>

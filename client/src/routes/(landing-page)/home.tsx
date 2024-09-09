@@ -1,8 +1,17 @@
-import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router'
 import { CiMenuBurger } from "react-icons/ci";
 import { useState } from 'react';
+import { auth } from '../../hooks/useAuth';
 
 export const Route = createFileRoute('/(landing-page)/home')({
+  beforeLoad: async() => {
+    const response = await auth();
+    if (response) {
+      throw redirect({to: '/dashboard'})
+    } else {
+      return;
+    }
+  }, 
   component: Home
 })
 
