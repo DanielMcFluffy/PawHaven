@@ -1,6 +1,6 @@
 import { z, ZodObject, ZodRawShape } from "zod";
 
-export const useForm = <T extends ZodRawShape>(
+export const validateFormWithZod = <T extends ZodRawShape>(
   schema: ZodObject<T>,
   formValue: z.infer<typeof schema>
 ) => {

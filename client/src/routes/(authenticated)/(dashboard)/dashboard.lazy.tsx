@@ -23,7 +23,7 @@ function Dashboard() {
     <div className='flex flex-col bg-0 h-dvh'>
       <Toolbar />
       <main className='flex h-full'>
-        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-50 rounded-xl shadow-md'><Outlet /></section>
+        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-50 rounded-tl-xl rounded-bl-xl shadow-md'><Outlet /></section>
       </main>
     </div>
     </>
@@ -56,7 +56,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const logout = async() => {
-    await AxiosGET('/logout')
+    await AxiosGET('/logout');
+    localStorage.setItem('has-session', '0');
     navigate({to: '/home'});
   }
 
