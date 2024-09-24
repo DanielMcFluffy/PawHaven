@@ -147,13 +147,11 @@ const Toolbar = ({dropdownOpen, setDropdownOpen, setShowLoginModal}: ToolbarProp
           >
             About
           </Link>
-          <Link 
-            to='/login'
-            className='hover:bg-slate-200 px-3 py-1.5'
-            activeProps={activeProps}
-          >
-            Login
-          </Link>
+          <button
+            className='hover:bg-slate-200 px-3 py-1.5 text-left'
+            onClick={() => setShowLoginModal(true)}
+          >Login
+          </button>
           </div>
         </nav>
       </header>
@@ -288,7 +286,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
             </div>}
           </div>
           <button type='submit' className="btn self-end">
-            {showRegisterModal ? 'Register' : 'Login'}
+            Login
           </button>
           <p className='font-info text-sm text-center'>
             Don't have an account? Register <button type='button' onClick={() => {
@@ -391,7 +389,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               </div>}
           </div>
           <button className="btn self-end">
-            Login
+            Register
           </button>
           <p className='font-info text-sm text-center'>
             Have an account? Login <button type='button' onClick={() => {
