@@ -4,6 +4,7 @@
   "description": "A website/portal to get collective information on pet medicine including information about domesticated animals, such as cats.",
   "main": "index.js",
   "scripts": {
+    "start": "SET NODE_ENV=production & SET VITE_NODE_ENV=production & concurrently \"cd ./server && npm run dev\" \"cd ./client && npm run dev\"",
     "dev": "concurrently \"cd ./server && npm run dev\" \"cd ./client && npm run dev\""
   },
   "keywords": [],

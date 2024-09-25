@@ -2,6 +2,7 @@
 import axios from "axios";
 import { Api_DELETE, Api_GET, Api_POST } from "../models/Api";
 import { BaseResponse, ErrorResponse } from "../models/Response";
+import { log } from ".";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -10,7 +11,9 @@ TResponse,
 TApi extends Api_GET
 >(url: TApi): Promise<BaseResponse<TResponse> | ErrorResponse > => {
   try {
+    log('[REQUEST][GET]', url);
     const response = await axios.get(url, {baseURL, withCredentials: true})
+    response.data ? log('[RESPONSE][GET]', url, response.data) : undefined;
     return response.data as BaseResponse<TResponse>;
   } catch (error) {
     console.error('Error:', (error as any).response.data);
@@ -24,7 +27,9 @@ TResponse,
 TApi extends Api_POST
 >(url: TApi, request: TRequest): Promise<BaseResponse<TResponse> | ErrorResponse> => {
   try {
+    log('[REQUEST][POST]', url);
     const response = await axios.post(url, request, {baseURL, withCredentials: true})
+    response.data ? log('[RESPONSE][POST]', url, response.data) : undefined;
     return response.data as BaseResponse<TResponse>
   } catch (error) {
     console.error('Error:', (error as any).response.data);
@@ -37,7 +42,9 @@ TResponse,
 TApi extends Api_DELETE
 >(url: TApi): Promise<BaseResponse<TResponse> | ErrorResponse> => {
   try {
+    log('[REQUEST][DELETE]', url);
     const response = await axios.delete(url, {baseURL, withCredentials: true})
+    response.data ? log('[RESPONSE][DELETE]', url, response.data) : undefined;
     return response.data as BaseResponse<TResponse>
   } catch (error) {
     console.error('Error:', (error as any).response.data);

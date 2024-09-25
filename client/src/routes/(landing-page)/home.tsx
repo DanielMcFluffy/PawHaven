@@ -218,6 +218,11 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
     }
   };
 
+  const Register = async() => {
+    const {username, password, email} = registerFormValue;
+    await AxiosPOST('/register', {username, password, email});
+    setShowLoginModal(false);
+  }
 
   if (showLoginModal && !showRegisterModal) {
     return(
@@ -388,7 +393,10 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
                 {registerErrorMessage?.email?._errors[0]}
               </div>}
           </div>
-          <button className="btn self-end">
+          <button onClick={(e) => {
+            e.preventDefault();
+            Register();
+            }} className="btn self-end">
             Register
           </button>
           <p className='font-info text-sm text-center'>

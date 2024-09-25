@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Table } from '../../../components/Table';
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/medicines')({
   component: Medicines,
@@ -18,7 +19,7 @@ function Medicines() {
             />
         </header>
         <section>
-          content
+          <Table />
         </section>
       </div>
     </>
