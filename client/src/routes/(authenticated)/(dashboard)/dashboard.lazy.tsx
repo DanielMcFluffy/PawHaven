@@ -10,6 +10,7 @@ import { FaCalendarDay } from "react-icons/fa";
 
 
 import React from 'react';
+import { useAxios } from '../../../hooks/useAxios';
 
 export const Route = createLazyFileRoute('/(authenticated)/(dashboard)/dashboard')({
   component: Dashboard
@@ -53,10 +54,10 @@ const Toolbar = () => {
 const Sidebar = () => {
 
   const navigate = useNavigate();
+  const {AxiosGET} = useAxios();
 
   const logout = async() => {
-    // await AxiosGET('/logout');
-    localStorage.setItem('has-session', '0');
+    await AxiosGET('/logout');
     navigate({to: '/home'});
   }
 

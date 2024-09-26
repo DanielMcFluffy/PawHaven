@@ -2,12 +2,16 @@ import { createFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-rout
 import { CiMenuBurger } from "react-icons/ci";
 import { FaEyeSlash, FaRegEye  } from "react-icons/fa";
 import { createPortal } from 'react-dom';
-import { useAxios } from '../../hooks/axiosHttp';
 import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../utils/validation';
 import { validateFormWithZod } from '../../utils/validateFormWithZod';
 import React from 'react';
+import { useAxios } from '../../hooks/useAxios';
 
 export const Route = createFileRoute('/(landing-page)/home')({
+  beforeLoad: async({context}) => {
+    const {AxiosGET} = context.axios
+    await AxiosGET('/check-session')
+  },
   component: Home
 })
 
