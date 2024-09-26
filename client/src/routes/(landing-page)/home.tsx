@@ -1,33 +1,22 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-router'
 import { CiMenuBurger } from "react-icons/ci";
-import { useRef, useState } from 'react';
 import { FaEyeSlash, FaRegEye  } from "react-icons/fa";
-import { auth, hasSession } from '../../utils/auth';
 import { createPortal } from 'react-dom';
-import { AxiosPOST } from '../../utils/axiosHttp';
+import { useAxios } from '../../hooks/axiosHttp';
 import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../utils/validation';
 import { validateFormWithZod } from '../../utils/validateFormWithZod';
+import React from 'react';
 
 export const Route = createFileRoute('/(landing-page)/home')({
-  beforeLoad: async() => {
-    const session = hasSession();
-    if (!session) return;
-
-    const response = await auth();
-    if (response) {
-      throw redirect({to: '/dashboard'})
-    } else {
-      return;
-    }
-  }, 
   component: Home
 })
 
 function Home() {
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
+
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
+  const [showRegisterModal, setShowRegisterModal] = React.useState(false);
 
   return (
     <>
@@ -168,13 +157,15 @@ type AuthModalProps = {
 
 const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setShowRegisterModal}: AuthModalProps) => {
 
+  const {AxiosPOST} = useAxios();
+
   const navigate = useNavigate();
 
-  const [loginFormValue, setLoginFormValue] = useState<TLoginForm>({
+  const [loginFormValue, setLoginFormValue] = React.useState<TLoginForm>({
     username: '',
     password: ''
   })
-  const [registerFormValue, setRegisterFormValue] = useState<TRegisterForm>({
+  const [registerFormValue, setRegisterFormValue] = React.useState<TRegisterForm>({
     username: '',
     password: '',
     email: '',
@@ -186,12 +177,12 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
   const { error: loginError, formattedError: loginErrorMessage } = loginFormResult;
   const { error: registerError, formattedError: registerErrorMessage } = registerFormResult;
   
-  const [usernameTouched, setUsernameTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [emailTouched, setEmailTouched] = useState(false);
+  const [usernameTouched, setUsernameTouched] = React.useState(false);
+  const [passwordTouched, setPasswordTouched] = React.useState(false);
+  const [emailTouched, setEmailTouched] = React.useState(false);
 
-  const [showPassword, setShowPassword] = useState(false);
-  const passwordInput = useRef<HTMLDivElement>(null)
+  const [showPassword, setShowPassword] = React.useState(false);
+  const passwordInput = React.useRef<HTMLDivElement>(null)
   
   const clearForm = () => {
     setLoginFormValue({
@@ -211,7 +202,6 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
   const Login = async() => {
     const {username, password} = loginFormValue;
     const response = await AxiosPOST('/login', {username, password});
-
     if (response.status === 200) {
       localStorage.setItem('has-session', '1');
       navigate({to: '/dashboard'})

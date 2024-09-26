@@ -1,5 +1,4 @@
 import { createLazyFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-router'
-import { AxiosGET } from '../../../utils/axiosHttp';
 import { FaHome } from "react-icons/fa";
 import { IconType } from 'react-icons';
 import { CgProfile } from "react-icons/cg";
@@ -56,7 +55,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const logout = async() => {
-    await AxiosGET('/logout');
+    // await AxiosGET('/logout');
     localStorage.setItem('has-session', '0');
     navigate({to: '/home'});
   }
