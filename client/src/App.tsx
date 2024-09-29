@@ -1,15 +1,16 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import React from "react";
-import { LoadingContext } from "./contexts/loadingContext";
 import { useAxios } from "./hooks/useAxios";
-
+import { BaseContext } from "./contexts/baseContext";
+import { useCookies } from "react-cookie";
 
 //where we create the instance of router to be used all over the application
 const router = createRouter({
   routeTree,
   context: {
-    axios: undefined!
+    axios: undefined!,
+    cookie: undefined!,
   }
 });
 
@@ -22,17 +23,28 @@ declare module "@tanstack/react-router" {
 
 const App = () => {
   const [showLoading, setShowLoading] = React.useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
   return (
-    <LoadingContext.Provider value={{showLoading, setShowLoading}}> 
+    <BaseContext.Provider value={{
+      showLoading, 
+      setShowLoading,
+      cookies,
+      setCookie,
+      removeCookie
+      }}> 
       <Main />
-    </LoadingContext.Provider>
+    </BaseContext.Provider>
   );
 };
 
 const Main = () => {
   const axios = useAxios();
+  const cookie = useCookies();
   return (
-      <RouterProvider router={router} context={{ axios }} />
+      <RouterProvider router={router} context={{
+         axios,
+         cookie 
+        }} />
   );
 };
 

@@ -4,13 +4,13 @@ import { Api_DELETE, Api_GET, Api_POST } from "../models/Api";
 import { BaseResponse, ErrorResponse } from "../models/Response";
 import { log } from "../utils";
 import React from "react";
-import { LoadingContext } from "../contexts/loadingContext";
+import { BaseContext } from "../contexts/baseContext";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
 export const useAxios = () => {
   
-  const setShowLoading = React.useContext(LoadingContext)!.setShowLoading;
+  const setShowLoading = React.useContext(BaseContext)!.setShowLoading;
 
   const AxiosGET = async<
   TResponse,

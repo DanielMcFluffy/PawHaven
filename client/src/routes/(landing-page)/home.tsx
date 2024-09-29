@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, redirect, useNavigate } from '@tanstack/react-router'
 import { CiMenuBurger } from "react-icons/ci";
 import { FaEyeSlash, FaRegEye  } from "react-icons/fa";
 import { createPortal } from 'react-dom';
@@ -9,8 +9,22 @@ import { useAxios } from '../../hooks/useAxios';
 
 export const Route = createFileRoute('/(landing-page)/home')({
   beforeLoad: async({context}) => {
-    const {AxiosGET} = context.axios
-    await AxiosGET('/check-session')
+
+    // if cookie exists, check if the session is valid
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [cookie, _, removeCookie ] = context.cookie;
+
+    if ((cookie as Record<string, string>)['connect.sid']) {
+      const {AxiosGET} = context.axios
+      const response = await AxiosGET('/check-session')  
+      if (response.status === 200) {
+        throw redirect({
+          to: '/dashboard'
+        })
+      } else {
+        removeCookie('connect.sid')
+      }
+    } 
   },
   component: Home
 })
@@ -207,7 +221,6 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
     const {username, password} = loginFormValue;
     const response = await AxiosPOST('/login', {username, password});
     if (response.status === 200) {
-      localStorage.setItem('has-session', '1');
       navigate({to: '/dashboard'})
     }
   };

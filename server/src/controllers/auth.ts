@@ -114,10 +114,19 @@ export const checkSession = async(req: Request, res: Response, next: NextFunctio
 }
 
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
+  req.logOut({ keepSessionInfo: false }, (err) => {
+    if (err) return next(err);
 
-  req.logOut({keepSessionInfo: false}, (err) => {
-    if (err) next(err);
-    const response = new BaseResponse(200, 'Logged out', undefined);
-    return res.status(response.status).json(response);
-  })
+    req.session.destroy((err) => {
+      if (err) return next(err);
+
+      // Clear the session cookie
+      res.clearCookie('connect.sid', {
+        httpOnly: false,
+      });
+
+      const response = new BaseResponse(200, 'Logged out', undefined);
+      return res.status(response.status).json(response);
+    });
+  });
 }

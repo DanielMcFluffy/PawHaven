@@ -27,7 +27,11 @@ app.use(session({
   secret: process.env.SECRET!,
   resave: false,
   saveUninitialized: false,
-  cookie: {maxAge: 60 * 60 * 1000}, //1 hour
+  cookie: {
+    maxAge: 60 * 60 * 1000, //1 hour
+    httpOnly: false
+    // secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production
+  }, 
 }))
 
 app.use(passport.authenticate('session'));
