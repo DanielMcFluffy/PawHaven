@@ -6,6 +6,7 @@ import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm 
 import { validateFormWithZod } from '../../utils/validateFormWithZod';
 import React from 'react';
 import { useAxios } from '../../hooks/useAxios';
+import { toast } from 'react-toastify';
 
 export const Route = createFileRoute('/(landing-page)/home')({
   beforeLoad: async({context}) => {
@@ -219,6 +220,11 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
 
   const Login = async() => {
     const {username, password} = loginFormValue;
+
+    if (!username || !password) {
+      return toast.error('Please fill in all fields');
+    }
+
     const response = await AxiosPOST('/login', {username, password});
     if (response.status === 200) {
       navigate({to: '/dashboard'})
@@ -227,6 +233,15 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
 
   const Register = async() => {
     const {username, password, email} = registerFormValue;
+
+    if (!username || !password || !email) {
+      return toast.error('Please fill in all fields');
+    }
+
+    if (!username || !password ) {
+      return toast.error('Please fill in all fields');
+    }
+
     await AxiosPOST('/register', {username, password, email});
     setShowLoginModal(false);
   }

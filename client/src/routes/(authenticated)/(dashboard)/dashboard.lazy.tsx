@@ -11,6 +11,7 @@ import { FaCalendarDay } from "react-icons/fa";
 
 import React from 'react';
 import { useAxios } from '../../../hooks/useAxios';
+import { toast } from 'react-toastify';
 
 export const Route = createLazyFileRoute('/(authenticated)/(dashboard)/dashboard')({
   component: Dashboard
@@ -58,6 +59,7 @@ const Sidebar = () => {
 
   const logout = async() => {
     await AxiosGET('/logout');
+    toast.success('Logged out successfully');
     navigate({to: '/home'});
   }
 

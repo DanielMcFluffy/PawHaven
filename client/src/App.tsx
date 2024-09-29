@@ -4,6 +4,9 @@ import React from "react";
 import { useAxios } from "./hooks/useAxios";
 import { BaseContext } from "./contexts/baseContext";
 import { useCookies } from "react-cookie";
+import { Loading } from "./components/Loading";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 //where we create the instance of router to be used all over the application
 const router = createRouter({
@@ -23,12 +26,12 @@ declare module "@tanstack/react-router" {
 
 const App = () => {
   const [showLoading, setShowLoading] = React.useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
+  const [cookie, setCookie, removeCookie] = useCookies(['connect.sid']);
   return (
     <BaseContext.Provider value={{
       showLoading, 
       setShowLoading,
-      cookies,
+      cookie,
       setCookie,
       removeCookie
       }}> 
@@ -40,11 +43,21 @@ const App = () => {
 const Main = () => {
   const axios = useAxios();
   const cookie = useCookies();
+
+  const { 
+    showLoading,
+  } = React.useContext(BaseContext)!;
+
   return (
+      <>
+      <ToastContainer />
+      <Loading 
+        showLoading={showLoading} />
       <RouterProvider router={router} context={{
-         axios,
-         cookie 
+        axios,
+        cookie 
         }} />
+      </>
   );
 };
 
