@@ -31,8 +31,6 @@ export const Route = createFileRoute('/(landing-page)/home')({
 })
 
 function Home() {
-
-
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [showLoginModal, setShowLoginModal] = React.useState(false);
   const [showRegisterModal, setShowRegisterModal] = React.useState(false);
@@ -81,7 +79,6 @@ type ToolbarProps = {
 }
 
 const Toolbar = ({dropdownOpen, setDropdownOpen, setShowLoginModal}: ToolbarProps) => {
-
   return(
     <>
     {/* desktop toolbar */}
@@ -175,9 +172,7 @@ type AuthModalProps = {
 }
 
 const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setShowRegisterModal}: AuthModalProps) => {
-
   const {AxiosPOST} = useAxios();
-
   const navigate = useNavigate();
 
   const [loginFormValue, setLoginFormValue] = React.useState<TLoginForm>({

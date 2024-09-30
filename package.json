@@ -2,9 +2,8 @@
   "name": "pawhaven",
   "version": "1.0.0",
   "description": "A website/portal to get collective information on pet medicine including information about domesticated animals, such as cats.",
-  "main": "index.js",
   "scripts": {
-    "start": "SET NODE_ENV=production & SET VITE_NODE_ENV=production & concurrently \"cd ./server && npm run dev\" \"cd ./client && npm run dev\"",
+    "start": "SET NODE_ENV=production & SET VITE_NODE_ENV=production & concurrently \"cd ./server && npm start\" \"cd ./client && npm start\"",
     "dev": "concurrently \"cd ./server && npm run dev\" \"cd ./client && npm run dev\""
   },
   "keywords": [],

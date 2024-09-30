@@ -18,7 +18,6 @@ export const Route = createLazyFileRoute('/(authenticated)/(dashboard)/dashboard
 })
 
 function Dashboard() {
-
   return(
     <>
     <div className='flex flex-col bg-0 h-dvh'>
@@ -26,6 +25,7 @@ function Dashboard() {
       <main className='flex h-full'>
         <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-50 rounded-tl-xl rounded-bl-xl shadow-md'><Outlet /></section>
       </main>
+      <Navbar />
     </div>
     </>
   )
@@ -44,16 +44,43 @@ const Toolbar = () => {
               width='220px' />
       </Link>
     </header>
-      {/* mobile toolbar */}
-    <header className='flex sm:hidden justify-between'>
+    </>
+  )
+}
 
-    </header>
+const Navbar = () => {
+  const navbarRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScrollRight = () => {
+    if (navbarRef.current) {
+      navbarRef.current.scrollBy({ left: window.innerWidth * 0.50, behavior: 'smooth' });
+    }
+  };
+  const handleScrollLeft = () => {
+    if (navbarRef.current) {
+      navbarRef.current.scrollBy({ left: -window.innerWidth * 0.25, behavior: 'smooth' });
+    }
+  };
+
+  return(
+    <>
+      <footer
+        ref={navbarRef}
+        className='fixed left-0 right-0 bottom-0 h-[10ch] bg-1 overflow-auto flex items-center'
+      >
+          {navigationButtons.map((x, index) => ( index < (navigationButtons.length - 1) ?
+            <NavbarButtonLink key={index} icon={x.icon} to={x.to} callback={() => {
+              if (index === 3) handleScrollRight();
+              else if (index < 3) handleScrollLeft();
+            }}/> :
+            ''
+          ))}
+      </footer>
     </>
   )
 }
 
 const Sidebar = () => {
-
   const navigate = useNavigate();
   const {AxiosGET} = useAxios();
 
@@ -65,10 +92,10 @@ const Sidebar = () => {
 
   return(
     <>
-      <aside className={`bg-0 h-full transition-[width] ease-in-out 'w-[15ch]'`}>       
+      <aside className={`bg-0 h-full transition-[width] ease-in-out 'w-[15ch]' hidden sm:block`}>       
         
       <section className='flex flex-col'>
-          {sidebarButtons.map((x, index) => ( index < (sidebarButtons.length - 1) ?
+          {navigationButtons.map((x, index) => ( index < (navigationButtons.length - 1) ?
             <SidebarButtonLink key={index} icon={x.icon} label={x.label} to={x.to} /> :
             <SidebarButtonLink key={index} icon={x.icon} label={x.label} callback={logout} /> 
           ))}
@@ -78,14 +105,14 @@ const Sidebar = () => {
   )
 }
 
-type SidebarButtonProps = {
+type NavigationButtonProps = {
   icon: IconType;
   label: string;
   to?: string;
   callback?: () => void;
 }
 
-const sidebarButtons: SidebarButtonProps[] = [
+const navigationButtons: NavigationButtonProps[] = [
   {icon: FaHome, label: 'Dashboard', to: '/dashboard'},
   {icon: FaCalendarDay, label: 'Appointments', to: '/dashboard/appointments'},
   {icon: MdPets, label: 'Pets', to: '/dashboard/pets'},
@@ -95,8 +122,29 @@ const sidebarButtons: SidebarButtonProps[] = [
   {icon: CiLogout, label: 'Logout'},
 ]
 
-const SidebarButton = ({icon, label, callback}: SidebarButtonProps) => {
+const NavbarButtonLink = ({icon, to, callback}: Omit<NavigationButtonProps, 'label'>) => {
 
+  return(
+    <>
+      <Link
+        className='min-w-[25%] text-2xl flex justify-center text-[#ADBBDA]' 
+        to={to}
+        activeProps={navbarActiveProps}
+        activeOptions={{exact: true}}
+        onClick={callback}>
+        {React.createElement(icon)}
+      </Link>
+    </>
+  )
+}
+
+const navbarActiveProps: React.AnchorHTMLAttributes<HTMLAnchorElement> | (() => React.AnchorHTMLAttributes<HTMLAnchorElement>) | undefined = {
+  style: {
+    color: '#3D52A0',
+  },
+};
+
+const SidebarButton = ({icon, label, callback}: NavigationButtonProps) => {
   return (
     <>
       <button className='flex flex-col justify-center items-center hover:bg-slate-300 px-2 py-4 rounded-lg' onClick={callback}>
@@ -111,7 +159,7 @@ const SidebarButton = ({icon, label, callback}: SidebarButtonProps) => {
   )
 }
 
-const SidebarActiveProps: React.AnchorHTMLAttributes<HTMLAnchorElement> | (() => React.AnchorHTMLAttributes<HTMLAnchorElement>) | undefined = {
+const sidebarActiveProps: React.AnchorHTMLAttributes<HTMLAnchorElement> | (() => React.AnchorHTMLAttributes<HTMLAnchorElement>) | undefined = {
   style: {
     boxShadow: '0 4px 4px rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ADBBDA',
@@ -119,13 +167,13 @@ const SidebarActiveProps: React.AnchorHTMLAttributes<HTMLAnchorElement> | (() =>
   },
 };
 
-const SidebarButtonLink = ({ icon, label, to, callback }: SidebarButtonProps) => {
+const SidebarButtonLink = ({ icon, label, to, callback }: NavigationButtonProps) => {
   if (!to) {
     return <SidebarButton icon={icon} label={label} callback={callback} />;
   }
 
   return (
-    <Link to={to} activeProps={SidebarActiveProps} activeOptions={{exact: true}} className='flex flex-col justify-center items-center hover:bg-slate-300 hover:rounded-md px-2 py-4'>
+    <Link to={to} activeProps={sidebarActiveProps} activeOptions={{exact: true}} className='flex flex-col justify-center items-center hover:bg-slate-300 hover:rounded-md px-2 py-4'>
       <div>{React.createElement(icon)}</div>
       <div>{label}</div>
     </Link>
