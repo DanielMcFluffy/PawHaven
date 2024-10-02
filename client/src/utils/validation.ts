@@ -22,5 +22,11 @@ export const registerFormValidation = z.object({
   email: z.string().email({message: 'Email not valid'})
 })
 
+export const editUserFormValidation = z.object({
+  username: z.string().min(3, {message: 'Username should be at least three characters'}),
+  email: z.string().email({message: 'Email not valid'})
+})
+
 export type TLoginForm = z.infer<typeof loginFormValidation>;
 export type TRegisterForm = z.infer<typeof registerFormValidation>;
+export type TEditUserForm = z.infer<typeof editUserFormValidation>;

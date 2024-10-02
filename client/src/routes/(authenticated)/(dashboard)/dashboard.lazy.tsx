@@ -23,7 +23,7 @@ function Dashboard() {
     <div className='flex flex-col bg-0 h-dvh'>
       <Toolbar />
       <main className='flex h-full'>
-        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-50 rounded-tl-xl rounded-bl-xl shadow-md'><Outlet /></section>
+        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-200 sm:bg-slate-50 sm:rounded-tl-xl sm:rounded-bl-xl shadow-md'><Outlet /></section>
       </main>
       <Navbar />
     </div>
@@ -66,7 +66,7 @@ const Navbar = () => {
     <>
       <footer
         ref={navbarRef}
-        className='fixed left-0 right-0 bottom-0 h-[10ch] bg-1 overflow-auto flex items-center'
+        className='fixed left-0 right-0 bottom-0 h-[10ch] bg-1 overflow-auto flex sm:hidden items-center'
       >
           {navigationButtons.map((x, index) => ( index < (navigationButtons.length - 1) ?
             <NavbarButtonLink key={index} icon={x.icon} to={x.to} callback={() => {

@@ -266,7 +266,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               htmlFor="username">Username</label>
             <input
               id='username'
-              className='p-2 rounded-md bg-slate-50 focus:outline-none focus:bg-slate-100' 
+              className='input' 
               type="text"
               placeholder='John Doe'
               onBlur={() => setUsernameTouched(true)}
@@ -283,15 +283,15 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
             <label
               className='ml-2'
               htmlFor="password">Password</label>
-            <div ref={passwordInput} className='p-2 rounded-md bg-slate-50 focus:outline-none focus:bg-slate-100 flex' >
+            <div ref={passwordInput} className='input focus:outline-none flex' >
               <input
                 id='password'
                 className='bg-transparent focus:outline-none flex-1'
                 type={showPassword ? 'text' : 'password'}
                 placeholder='Password'
-                onFocus={() => passwordInput.current!.style.backgroundColor = '#f1f5f9'}
+                onFocus={() => passwordInput.current!.style.backgroundColor = '#e2e8f0'}
                 onBlur={() => {
-                  passwordInput.current!.style.backgroundColor = '#f8fafc';
+                  passwordInput.current!.style.backgroundColor = '#f1f5f9';
                   setPasswordTouched(true);
                 }}
                 value={loginFormValue.password}
@@ -349,7 +349,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               htmlFor="username">Username</label>
             <input
               id='username'
-              className='p-2 rounded-md bg-slate-50 focus:outline-none focus:bg-slate-100 ' 
+              className='input' 
               type="text"
               placeholder='John Doe'
               onBlur={() => setUsernameTouched(true)}
@@ -367,15 +367,15 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               className='ml-2'
               htmlFor="password">Password
             </label>
-            <div ref={passwordInput} className='p-2 rounded-md bg-slate-50 focus:outline-none focus:bg-slate-100 flex'>
+            <div ref={passwordInput} className='input focus:outline-none flex'>
               <input
                 id='password'
                 className='bg-transparent focus:outline-none flex-1'
                 type={showPassword ? 'text' : 'password'}
                 placeholder='Password'
-                onFocus={() => passwordInput.current!.style.backgroundColor = '#f1f5f9'}
+                onFocus={() => passwordInput.current!.style.backgroundColor = '#e2e8f0'}
                 onBlur={() => {
-                  passwordInput.current!.style.backgroundColor = '#f8fafc';
+                  passwordInput.current!.style.backgroundColor = '#f1f5f9';
                   setPasswordTouched(true);
                 }}
                 value={registerFormValue.password}
@@ -397,7 +397,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               htmlFor="email">Email</label>
             <input
               id='email'
-              className='p-2 rounded-md bg-slate-50 focus:outline-none focus:bg-slate-100 ' 
+              className='input' 
               type="email"
               placeholder='John@Doe.com'
               value={registerFormValue.email}
