@@ -7,8 +7,6 @@ import { CiLogout } from "react-icons/ci";
 import { GiArchiveResearch } from "react-icons/gi";
 import { MdPets } from "react-icons/md";
 import { FaCalendarDay } from "react-icons/fa";
-
-
 import React from 'react';
 import { useAxios } from '../../../hooks/useAxios';
 import { toast } from 'react-toastify';
@@ -18,14 +16,18 @@ export const Route = createLazyFileRoute('/(authenticated)/(dashboard)/dashboard
 })
 
 function Dashboard() {
+
   return(
     <>
     <div className='flex flex-col bg-0 h-dvh'>
       <Toolbar />
       <main className='flex h-full'>
-        <Sidebar /> <section className='h-full w-full px-6 py-4 bg-slate-200 sm:bg-slate-50 sm:rounded-tl-xl sm:rounded-bl-xl shadow-md'><Outlet /></section>
+        <Sidebar 
+        /> 
+        <section className='h-full w-full px-6 py-4 bg-slate-200 sm:bg-slate-50 sm:rounded-tl-xl sm:rounded-bl-xl shadow-md'><Outlet /></section>
       </main>
-      <Navbar />
+      <Navbar 
+      />
     </div>
     </>
   )
