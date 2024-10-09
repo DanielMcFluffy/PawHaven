@@ -71,7 +71,7 @@ const Navbar = () => {
         className='fixed left-0 right-0 bottom-0 h-[10ch] bg-1 overflow-auto flex sm:hidden items-center'
       >
           {navigationButtons.map((x, index) => ( index < (navigationButtons.length - 1) ?
-            <NavbarButtonLink key={index} icon={x.icon} to={x.to} callback={() => {
+            <NavbarButtonLink key={index} icon={x.icon} exact={x.exact} to={x.to} callback={() => {
               if (index === 3) handleScrollRight();
               else if (index < 3) handleScrollLeft();
             }}/> :
@@ -98,7 +98,7 @@ const Sidebar = () => {
         
       <section className='flex flex-col'>
           {navigationButtons.map((x, index) => ( index < (navigationButtons.length - 1) ?
-            <SidebarButtonLink key={index} icon={x.icon} label={x.label} to={x.to} /> :
+            <SidebarButtonLink key={index} icon={x.icon} label={x.label} to={x.to} exact={x.exact} /> :
             <SidebarButtonLink key={index} icon={x.icon} label={x.label} callback={logout} /> 
           ))}
         </section>
@@ -111,6 +111,7 @@ type NavigationButtonProps = {
   icon: IconType;
   label: string;
   to?: string;
+  exact?: boolean;
   callback?: () => void;
 }
 
@@ -120,11 +121,11 @@ const navigationButtons: NavigationButtonProps[] = [
   {icon: MdPets, label: 'Pets', to: '/dashboard/pets'},
   {icon: GiArchiveResearch, label: 'Medicines', to: '/dashboard/medicines'},
   {icon: CgProfile, label: 'Profile', to: '/dashboard/profile'},
-  {icon: IoIosSettings, label: 'Settings', to: '/dashboard/settings'},
+  {icon: IoIosSettings, label: 'Settings', to: '/dashboard/settings', exact: false},
   {icon: CiLogout, label: 'Logout'},
 ]
 
-const NavbarButtonLink = ({icon, to, callback}: Omit<NavigationButtonProps, 'label'>) => {
+const NavbarButtonLink = ({icon, to, callback, exact = true}: Omit<NavigationButtonProps, 'label'>) => {
 
   return(
     <>
@@ -132,7 +133,7 @@ const NavbarButtonLink = ({icon, to, callback}: Omit<NavigationButtonProps, 'lab
         className='min-w-[25%] text-2xl flex justify-center text-[#ADBBDA]' 
         to={to}
         activeProps={navbarActiveProps}
-        activeOptions={{exact: true}}
+        activeOptions={{exact}}
         onClick={callback}>
         {React.createElement(icon)}
       </Link>
@@ -169,13 +170,13 @@ const sidebarActiveProps: React.AnchorHTMLAttributes<HTMLAnchorElement> | (() =>
   },
 };
 
-const SidebarButtonLink = ({ icon, label, to, callback }: NavigationButtonProps) => {
+const SidebarButtonLink = ({ icon, label, to, callback, exact = true }: NavigationButtonProps) => {
   if (!to) {
     return <SidebarButton icon={icon} label={label} callback={callback} />;
   }
 
   return (
-    <Link to={to} activeProps={sidebarActiveProps} activeOptions={{exact: true}} className='flex flex-col justify-center items-center hover:bg-slate-300 hover:rounded-md px-2 py-4'>
+    <Link to={to} activeProps={sidebarActiveProps} activeOptions={{exact}} className='flex flex-col justify-center items-center hover:bg-slate-300 hover:rounded-md px-2 py-4'>
       <div>{React.createElement(icon)}</div>
       <div>{label}</div>
     </Link>

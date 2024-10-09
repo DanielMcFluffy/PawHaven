@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/settings_privacy')({
+export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/settings/privacy')({
   component: () => <div className='flex flex-col gap-6'>
   <h2 
     className='text-center font-bold'>Privacy Policy</h2>

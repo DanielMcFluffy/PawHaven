@@ -18,13 +18,13 @@ import { Route as landingPageHomeMainImport } from './routes/(landing-page)/home
 import { Route as landingPageHomeAboutImport } from './routes/(landing-page)/home.about'
 import { Route as authenticateddashboardDashboardImport } from './routes/(authenticated)/(dashboard)/dashboard'
 import { Route as authenticateddashboardDashboardIndexImport } from './routes/(authenticated)/(dashboard)/dashboard.index'
-import { Route as authenticateddashboardDashboardSettingsprivacyImport } from './routes/(authenticated)/(dashboard)/dashboard.settings_privacy'
-import { Route as authenticateddashboardDashboardSettingsinfoImport } from './routes/(authenticated)/(dashboard)/dashboard.settings_info'
 import { Route as authenticateddashboardDashboardSettingsImport } from './routes/(authenticated)/(dashboard)/dashboard.settings'
 import { Route as authenticateddashboardDashboardProfileImport } from './routes/(authenticated)/(dashboard)/dashboard.profile'
 import { Route as authenticateddashboardDashboardPetsImport } from './routes/(authenticated)/(dashboard)/dashboard.pets'
 import { Route as authenticateddashboardDashboardMedicinesImport } from './routes/(authenticated)/(dashboard)/dashboard.medicines'
 import { Route as authenticateddashboardDashboardAppointmentsImport } from './routes/(authenticated)/(dashboard)/dashboard.appointments'
+import { Route as authenticateddashboardDashboardSettingsPrivacyImport } from './routes/(authenticated)/(dashboard)/dashboard.settings.privacy'
+import { Route as authenticateddashboardDashboardSettingsInfoImport } from './routes/(authenticated)/(dashboard)/dashboard.settings.info'
 
 // Create/Update Routes
 
@@ -71,18 +71,6 @@ const authenticateddashboardDashboardIndexRoute =
     getParentRoute: () => authenticateddashboardDashboardRoute,
   } as any)
 
-const authenticateddashboardDashboardSettingsprivacyRoute =
-  authenticateddashboardDashboardSettingsprivacyImport.update({
-    path: '/settings_privacy',
-    getParentRoute: () => authenticateddashboardDashboardRoute,
-  } as any)
-
-const authenticateddashboardDashboardSettingsinfoRoute =
-  authenticateddashboardDashboardSettingsinfoImport.update({
-    path: '/settings_info',
-    getParentRoute: () => authenticateddashboardDashboardRoute,
-  } as any)
-
 const authenticateddashboardDashboardSettingsRoute =
   authenticateddashboardDashboardSettingsImport.update({
     path: '/settings',
@@ -111,6 +99,18 @@ const authenticateddashboardDashboardAppointmentsRoute =
   authenticateddashboardDashboardAppointmentsImport.update({
     path: '/appointments',
     getParentRoute: () => authenticateddashboardDashboardRoute,
+  } as any)
+
+const authenticateddashboardDashboardSettingsPrivacyRoute =
+  authenticateddashboardDashboardSettingsPrivacyImport.update({
+    path: '/privacy',
+    getParentRoute: () => authenticateddashboardDashboardSettingsRoute,
+  } as any)
+
+const authenticateddashboardDashboardSettingsInfoRoute =
+  authenticateddashboardDashboardSettingsInfoImport.update({
+    path: '/info',
+    getParentRoute: () => authenticateddashboardDashboardSettingsRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -194,26 +194,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenticateddashboardDashboardSettingsImport
       parentRoute: typeof authenticateddashboardDashboardImport
     }
-    '/(authenticated)/(dashboard)/dashboard/settings_info': {
-      id: '/dashboard/settings_info'
-      path: '/settings_info'
-      fullPath: '/dashboard/settings_info'
-      preLoaderRoute: typeof authenticateddashboardDashboardSettingsinfoImport
-      parentRoute: typeof authenticateddashboardDashboardImport
-    }
-    '/(authenticated)/(dashboard)/dashboard/settings_privacy': {
-      id: '/dashboard/settings_privacy'
-      path: '/settings_privacy'
-      fullPath: '/dashboard/settings_privacy'
-      preLoaderRoute: typeof authenticateddashboardDashboardSettingsprivacyImport
-      parentRoute: typeof authenticateddashboardDashboardImport
-    }
     '/(authenticated)/(dashboard)/dashboard/': {
       id: '/dashboard/'
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof authenticateddashboardDashboardIndexImport
       parentRoute: typeof authenticateddashboardDashboardImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/settings/info': {
+      id: '/dashboard/settings/info'
+      path: '/info'
+      fullPath: '/dashboard/settings/info'
+      preLoaderRoute: typeof authenticateddashboardDashboardSettingsInfoImport
+      parentRoute: typeof authenticateddashboardDashboardSettingsImport
+    }
+    '/(authenticated)/(dashboard)/dashboard/settings/privacy': {
+      id: '/dashboard/settings/privacy'
+      path: '/privacy'
+      fullPath: '/dashboard/settings/privacy'
+      preLoaderRoute: typeof authenticateddashboardDashboardSettingsPrivacyImport
+      parentRoute: typeof authenticateddashboardDashboardSettingsImport
     }
   }
 }
@@ -233,9 +233,11 @@ export const routeTree = rootRoute.addChildren({
       authenticateddashboardDashboardMedicinesRoute,
       authenticateddashboardDashboardPetsRoute,
       authenticateddashboardDashboardProfileRoute,
-      authenticateddashboardDashboardSettingsRoute,
-      authenticateddashboardDashboardSettingsinfoRoute,
-      authenticateddashboardDashboardSettingsprivacyRoute,
+      authenticateddashboardDashboardSettingsRoute:
+        authenticateddashboardDashboardSettingsRoute.addChildren({
+          authenticateddashboardDashboardSettingsInfoRoute,
+          authenticateddashboardDashboardSettingsPrivacyRoute,
+        }),
       authenticateddashboardDashboardIndexRoute,
     }),
 })
@@ -272,8 +274,6 @@ export const routeTree = rootRoute.addChildren({
         "/dashboard/pets",
         "/dashboard/profile",
         "/dashboard/settings",
-        "/dashboard/settings_info",
-        "/dashboard/settings_privacy",
         "/dashboard/"
       ]
     },
@@ -307,19 +307,23 @@ export const routeTree = rootRoute.addChildren({
     },
     "/dashboard/settings": {
       "filePath": "(authenticated)/(dashboard)/dashboard.settings.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/settings_info": {
-      "filePath": "(authenticated)/(dashboard)/dashboard.settings_info.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/settings_privacy": {
-      "filePath": "(authenticated)/(dashboard)/dashboard.settings_privacy.tsx",
-      "parent": "/dashboard"
+      "parent": "/dashboard",
+      "children": [
+        "/dashboard/settings/info",
+        "/dashboard/settings/privacy"
+      ]
     },
     "/dashboard/": {
       "filePath": "(authenticated)/(dashboard)/dashboard.index.tsx",
       "parent": "/dashboard"
+    },
+    "/dashboard/settings/info": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.settings.info.tsx",
+      "parent": "/dashboard/settings"
+    },
+    "/dashboard/settings/privacy": {
+      "filePath": "(authenticated)/(dashboard)/dashboard.settings.privacy.tsx",
+      "parent": "/dashboard/settings"
     }
   }
 }
