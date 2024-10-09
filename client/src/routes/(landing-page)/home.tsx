@@ -1,12 +1,12 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router'
 import { CiMenuBurger } from "react-icons/ci";
 import { FaEyeSlash, FaRegEye  } from "react-icons/fa";
 import { createPortal } from 'react-dom';
 import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../utils/validation';
 import { validateFormWithZod } from '../../utils/validateFormWithZod';
 import React from 'react';
-import { useAxios } from '../../hooks/useAxios';
-import { toast } from 'react-toastify';
+import { useAuth } from '../../hooks/useAuth';
+import { ErrorResponse } from '../../models/Response';
 
 export const Route = createFileRoute('/(landing-page)/home')({
   beforeLoad: async({context}) => {
@@ -172,8 +172,7 @@ type AuthModalProps = {
 }
 
 const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setShowRegisterModal}: AuthModalProps) => {
-  const {AxiosPOST} = useAxios();
-  const navigate = useNavigate();
+  const {login, register} = useAuth();
 
   const [loginFormValue, setLoginFormValue] = React.useState<TLoginForm>({
     username: '',
@@ -213,34 +212,6 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
     setEmailTouched(false);
   }
 
-  const Login = async() => {
-    const {username, password} = loginFormValue;
-
-    if (!username || !password) {
-      return toast.error('Please fill in all fields');
-    }
-
-    const response = await AxiosPOST('/login', {username, password});
-    if (response.status === 200) {
-      navigate({to: '/dashboard'})
-    }
-  };
-
-  const Register = async() => {
-    const {username, password, email} = registerFormValue;
-
-    if (!username || !password || !email) {
-      return toast.error('Please fill in all fields');
-    }
-
-    if (!username || !password ) {
-      return toast.error('Please fill in all fields');
-    }
-
-    await AxiosPOST('/register', {username, password, email});
-    setShowLoginModal(false);
-  }
-
   if (showLoginModal && !showRegisterModal) {
     return(
       <>
@@ -257,7 +228,8 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
           className='flex flex-col gap-2'
           onSubmit={e =>{
             e.preventDefault();
-            Login()
+            const {username, password} = loginFormValue;
+            login(username, password);
           }}
         >
           <div className='flex flex-col gap-1'>
@@ -410,9 +382,11 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
                 {registerErrorMessage?.email?._errors[0]}
               </div>}
           </div>
-          <button onClick={(e) => {
+          <button onClick={async(e) => {
             e.preventDefault();
-            Register();
+            const {username, password, email} = registerFormValue;
+            const response = await register(username, password, email);
+            (response as ErrorResponse).status !== 200 ? clearForm() : undefined;
             }} className="btn self-end">
             Register
           </button>

@@ -1,4 +1,4 @@
-import { createLazyFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-router'
+import { createLazyFileRoute, Link, Outlet } from '@tanstack/react-router'
 import { FaHome } from "react-icons/fa";
 import { IconType } from 'react-icons';
 import { CgProfile } from "react-icons/cg";
@@ -8,8 +8,7 @@ import { GiArchiveResearch } from "react-icons/gi";
 import { MdPets } from "react-icons/md";
 import { FaCalendarDay } from "react-icons/fa";
 import React from 'react';
-import { useAxios } from '../../../hooks/useAxios';
-import { toast } from 'react-toastify';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const Route = createLazyFileRoute('/(authenticated)/(dashboard)/dashboard')({
   component: Dashboard
@@ -83,14 +82,8 @@ const Navbar = () => {
 }
 
 const Sidebar = () => {
-  const navigate = useNavigate();
-  const {AxiosGET} = useAxios();
 
-  const logout = async() => {
-    await AxiosGET('/logout');
-    toast.success('Logged out successfully');
-    navigate({to: '/home'});
-  }
+  const {logout} = useAuth();
 
   return(
     <>

@@ -1,26 +1,19 @@
-import { createFileRoute, createLink, Outlet, useChildMatches, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, createLink, Outlet, useChildMatches } from '@tanstack/react-router'
 import { RowCard } from '../../../components/RowCard';
-import { useAxios } from '../../../hooks/useAxios';
-import { toast } from 'react-toastify';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/settings')({
   component: Settings,
 })
 
 function Settings() {
-  const navigate = useNavigate();
-  const {AxiosGET} = useAxios();
+
+  const {logout} = useAuth()
 
     // Check if the current route matches any child route
   const childMatch = useChildMatches({
     select: (match) => match.length
   })
-  const logout = async() => {
-    await AxiosGET('/logout');
-    toast.success('Logged out successfully');
-    navigate({to: '/home'});
-  }
-
   return(
     <>
       {childMatch === 0 && 
