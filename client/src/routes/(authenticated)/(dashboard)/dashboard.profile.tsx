@@ -4,6 +4,8 @@ import { editUserFormValidation, TEditUserForm } from '../../../utils/validation
 import { validateFormWithZod } from '../../../utils/validateFormWithZod';
 import { log } from '../../../utils';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../../hooks/useAuth';
+import { useAxios } from '../../../hooks/useAxios';
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/profile')({
   component: Profile,
@@ -11,9 +13,13 @@ export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/pro
 
 function Profile() {
 
+  const {AxiosPOST} = useAxios();
+  const {getUser} = useAuth();
+  const user = getUser();
+
   const [editUserFormValue, setEditUserFormValue] = React.useState<TEditUserForm>({
-    username: '',
-    email: ''
+    username: user.username,
+    email: user.email
   });
 
   const editUserFormResult = validateFormWithZod(editUserFormValidation, editUserFormValue);
@@ -24,16 +30,34 @@ function Profile() {
 
   const [isEditing, setIsEditing] = React.useState(false);
 
-  const saveEdit = () => {
+  const saveEdit = async() => {
     if (!isEditing) {
       return setIsEditing(true);
     }
 
-    if (success) {
-      log('success', editUserFormValue);
+    if (error) {
+      return toast.error('Invalid format');
+    }
+
+    if (success && editUserFormValue.email === user.email) {
+      toast.info('No changes');
       return setIsEditing(false);
     }
-    toast.error('Invalid form edit');
+    
+    if (success) {
+      log('success', editUserFormValue);
+      const response = await AxiosPOST('/users/', {email: editUserFormValue.email}, user.user_id);
+      if (response.status === 200) {
+        toast.success('Admin Updated');
+        return setIsEditing(false);
+      } else {
+        setEditUserFormValue({
+          ...editUserFormValue,
+          email: user.email,
+        });
+        return setIsEditing(false);
+      }
+    }
   }
 
   return(
@@ -62,7 +86,7 @@ function Profile() {
                   onBlur={() => setUsernameTouched(true)}
                   value={editUserFormValue.username}
                   onChange={(e) => setEditUserFormValue(x => ({...x, username: e.target.value}))}
-                  disabled={!isEditing} />
+                  disabled={true} />
                 { error && usernameTouched && <div
                   className='text-xs text-red-500 ml-2'
                 >
@@ -96,18 +120,30 @@ function Profile() {
             </div>
           </div>
           <div 
-            className='h-full flex gap-6 justify-center'>
-            <button 
-              className='btn px-6'
-              onClick={saveEdit}
-              >
-              {isEditing ? 'Save' : 'Edit'}
-            </button>
-            {isEditing && <button
-              onClick={() => setIsEditing(false)} 
-              className='btn btn-secondary px-6'>
-              Cancel
-            </button>}
+            className='h-full flex flex-col gap-6 items-center justify-around'>
+              <div 
+                className='flex gap-6'>
+                <button 
+                  className='btn px-6'
+                  onClick={saveEdit}
+                  >
+                  {isEditing ? 'Save' : 'Edit'}
+                </button>
+                {isEditing && <button
+                  onClick={() => setIsEditing(false)} 
+                  className='btn btn-secondary px-6'>
+                  Cancel
+                </button>}
+              </div>
+            <div 
+              className='text-left w-full flex flex-col gap-4'>
+              <div
+                className='font-info text-xs'>id: {user.user_id}</div>
+              <div
+                className='font-info text-xs'>Last updated: {user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'New User'}</div>
+              <div
+                className='font-info text-xs'>Registered: {new Date(user.created_at).toLocaleDateString()}</div>
+            </div>
           </div>
       </div>
     </>

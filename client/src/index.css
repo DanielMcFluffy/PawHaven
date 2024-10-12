@@ -102,6 +102,8 @@
     outline-offset: 2px;
     --tw-bg-opacity: 1;
     background-color: rgb(203 213 225 / var(--tw-bg-opacity)) /* #cbd5e1 */;
+    --tw-text-opacity: 1;
+    color: rgb(107 114 128 / var(--tw-text-opacity)) /* #6b7280 */;
   }
   
 

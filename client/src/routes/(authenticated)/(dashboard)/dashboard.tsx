@@ -2,8 +2,10 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard')({
   beforeLoad: async({context}) => {
-    const [cookie] = context.cookie;
-    if (!(cookie as Record<string, string>)['connect.sid']) {
+    const cookieName = import.meta.env.VITE_COOKIE_NAME;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [cookie, _, removeCookie] = context.cookie;
+    if (!(cookie as Record<string, string>)[cookieName]) {
       throw redirect({
         to: '/home/main'
       })
@@ -11,10 +13,10 @@ export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard')({
     const {AxiosGET} = context.axios
     const response = await AxiosGET('/check-session')
     if (response.status !==200) {
+      removeCookie(cookieName)
       throw redirect({
         to: '/home/main'
       })
     }
-
   },
 })

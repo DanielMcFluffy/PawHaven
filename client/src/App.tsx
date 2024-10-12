@@ -25,8 +25,9 @@ declare module "@tanstack/react-router" {
 }
 
 const App = () => {
+  const cookieName = import.meta.env.VITE_COOKIE_NAME;
   const [showLoading, setShowLoading] = React.useState(false);
-  const [cookie, setCookie, removeCookie] = useCookies(['connect.sid']);
+  const [cookie, setCookie, removeCookie] = useCookies([cookieName]);
   return (
     <BaseContext.Provider value={{
       showLoading, 

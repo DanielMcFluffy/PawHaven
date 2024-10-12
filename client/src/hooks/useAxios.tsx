@@ -18,16 +18,17 @@ export const useAxios = () => {
   TApi extends Api_GET
   >(
     url: TApi,
+    id?: string,
   ): Promise<BaseResponse<TResponse> | ErrorResponse > => {
     try {
-      log('[REQUEST][GET]', url);
+      log('[REQUEST][GET]', url + (id || ''));
       setShowLoading(true);
-      const response = await axios.get(url, {baseURL, withCredentials: true})
-      response.data ? log('[RESPONSE][GET]', url, response.data) : undefined;
+      const response = await axios.get(url + (id || ''), {baseURL, withCredentials: true})
+      response.data ? log('[RESPONSE][GET]', url + (id || ''), response.data) : undefined;
       return response.data as BaseResponse<TResponse>;
     } catch (error) {
-      console.error('Error:', (error as any).response.data);
-      toast.error((error as any).response.data.message);
+      console.error('Error:', (error as any).response?.data || 'Connection Error');
+      toast.error((error as any).response?.data.message || 'Connection Error');
       return (error as any).response.data as ErrorResponse;
     } finally {
       setShowLoading(false);
@@ -41,16 +42,17 @@ export const useAxios = () => {
   >(
     url: TApi, 
     request: TRequest,
+    id?: string,
   ): Promise<BaseResponse<TResponse> | ErrorResponse> => {
     try {
-      log('[REQUEST][POST]', url);
+      log('[REQUEST][POST]', url + (id || ''));
       setShowLoading(true);
-      const response = await axios.post(url, request, {baseURL, withCredentials: true})
-      response.data ? log('[RESPONSE][POST]', url, response.data) : undefined;
+      const response = await axios.post(url + (id || ''), request, {baseURL, withCredentials: true})
+      response.data ? log('[RESPONSE][POST]', url + (id || ''), response.data) : undefined;
       return response.data as BaseResponse<TResponse>
     } catch (error) {
-      console.error('Error:', (error as any).response.data);
-      toast.error((error as any).response.data.message);
+      console.error('Error:', (error as any).response?.data || 'Connection Error');
+      toast.error((error as any).response?.data.message || 'Connection Error');
       return (error as any).response.data as ErrorResponse;
     } finally {
       setShowLoading(false);
@@ -62,16 +64,17 @@ export const useAxios = () => {
   TApi extends Api_DELETE
   >(
     url: TApi,
+    id?: string,
   ): Promise<BaseResponse<TResponse> | ErrorResponse> => {
     try {
-      log('[REQUEST][DELETE]', url);
+      log('[REQUEST][DELETE]', url + (id || ''));
       setShowLoading(true);
-      const response = await axios.delete(url, {baseURL, withCredentials: true})
-      response.data ? log('[RESPONSE][DELETE]', url, response.data) : undefined;
+      const response = await axios.delete(url + (id || ''), {baseURL, withCredentials: true})
+      response.data ? log('[RESPONSE][DELETE]', url + (id || ''), response.data) : undefined;
       return response.data as BaseResponse<TResponse>
     } catch (error) {
-      console.error('Error:', (error as any).response.data);
-      toast.error((error as any).response.data.message);
+      console.error('Error:', (error as any).response?.data || 'Connection Error');
+      toast.error((error as any).response?.data.message || 'Connection Error');
       return (error as any).response.data as ErrorResponse;
     } finally {
       setShowLoading(false);

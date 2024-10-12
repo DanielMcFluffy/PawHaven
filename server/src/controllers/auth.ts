@@ -8,6 +8,7 @@ import { User } from "../models/User";
 import { loginRequestSchema, registerRequestSchema } from "../lib/validation";
 import bcrypt from 'bcrypt';
 import { configDotenv } from "dotenv";
+import { StatusCodes } from "http-status-codes";
 
 configDotenv({path: ".././config/config.env"})  
 
@@ -25,7 +26,7 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
     if (err) { return next(err) }
 
     if (!user) {
-      return next(new ErrorResponse('User doesn\'t exist', 404))
+      return next(new ErrorResponse('User doesn\'t exist', StatusCodes.NOT_FOUND))
     }
 
     req.login(user, async(err) => {
@@ -49,7 +50,7 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
             VALUES (${req.sessionID}, ${sessionToken}, ${(req.user as User).user_id}, ${sql.json(sessionData)})
             RETURNING *
           `
-          const response = new BaseResponse(200, 'Login successful', {user, sessionToken})
+          const response = new BaseResponse(StatusCodes.OK, 'Login successful', {user, sessionToken})
           return res.status(response.status).json(response);
         } else {
           const sessionToken = generateSessionToken();
@@ -60,7 +61,7 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
                   updated_at = NOW()
               WHERE session_id = ${req.sessionID}
             `
-          const response = new BaseResponse(200, 'Login successful', {user, sessionToken})
+          const response = new BaseResponse(StatusCodes.OK, 'Login successful', {user, sessionToken})
           return res.status(response.status).json(response);
         }
 
@@ -74,11 +75,11 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
 
 export const register = async(req: Request, res: Response, next: NextFunction) => {
   try {
-  const validation = registerRequestSchema.parse(req.body)
-  const {username, password, email} = validation;
+    const validation = registerRequestSchema.parse(req.body)
+    const {username, password, email} = validation;
 
   if (!username || !password || !email) {
-    return next(new ErrorResponse('Please fill all required fields', 400));
+    return next(new ErrorResponse('Please fill all required fields', StatusCodes.BAD_REQUEST));
   }
 
       // Hash password
@@ -91,7 +92,7 @@ export const register = async(req: Request, res: Response, next: NextFunction) =
         RETURNING *;
       `;
 
-  const response = new BaseResponse(200, 'Registration successful', user);
+  const response = new BaseResponse(StatusCodes.OK, 'Registration successful', user);
   return res.status(response.status).json(response);
   } catch (error) {
     return next(error);
@@ -102,10 +103,10 @@ export const checkSession = async(req: Request, res: Response, next: NextFunctio
   console.log(req.isAuthenticated())
   try {
     if (req.isAuthenticated()) {
-      const response = new BaseResponse(200, 'valid session', true);
+      const response = new BaseResponse(StatusCodes.OK, 'valid session', true);
       return res.status(response.status).json(response);
     } else {
-      const response = new BaseResponse(401, 'invalid session', false);
+      const response = new BaseResponse(StatusCodes.UNAUTHORIZED, 'invalid session', false);
       return res.status(response.status).json(response);
     }
   } catch (error) {
@@ -125,7 +126,7 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
         httpOnly: false,
       });
 
-      const response = new BaseResponse(200, 'Logged out', undefined);
+      const response = new BaseResponse(StatusCodes.OK, 'Logged out', undefined);
       return res.status(response.status).json(response);
     });
   });

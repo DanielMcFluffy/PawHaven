@@ -2,6 +2,7 @@ import { NextFunction } from "express";
 import {Request, Response} from 'express';
 import { ErrorResponse } from "../lib/utils/errorResponse";
 import { ZodError } from "zod";
+import { StatusCodes } from "http-status-codes";
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
 
@@ -20,15 +21,15 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
         issue.message
       )
     }
-    error = new ErrorResponse(validationErrors, 400);
+    error = new ErrorResponse(validationErrors, StatusCodes.BAD_REQUEST);
   }
 
   //duplicated key
   if (error.code === '23505') {
-    error = new ErrorResponse(error.detail, 409)
+    error = new ErrorResponse(error.detail, StatusCodes.CONFLICT)
   }
 
-  res.status(error.status || 500).json({
+  res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({
     status: error.status,
     message: error.message || 'Server Error'
   });

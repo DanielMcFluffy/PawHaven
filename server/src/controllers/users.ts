@@ -2,28 +2,65 @@ import { NextFunction, Request, Response } from "express";
 import { ErrorResponse } from "../lib/utils/errorResponse";
 import sql from "../db";
 import { BaseResponse } from "../lib/utils/BaseResponse";
+import { updateUserRequestSchema } from "../lib/validation";
+import {StatusCodes} from "http-status-codes";
 
 export const getUsers = async(req: Request, res: Response, next: NextFunction) => {
-  const users = await sql`
-    SELECT * FROM users
-  `
-  if (!users.length) {
-    return next(new ErrorResponse('No users found', 404));
+  try {
+    const users = await sql`
+      SELECT * FROM users
+    `
+    if (!users.length) {
+      return next(new ErrorResponse('No users found', StatusCodes.NOT_FOUND));
+    }
+    
+    const response = new BaseResponse(StatusCodes.OK, 'success', users)
+    return res.status(response.status).json(response);
+  } catch (error) {
+    next(error);    
   }
-  
-  const response = new BaseResponse(200, 'success', users)
-  return res.status(response.status).json(response);
 }
 
 export const getUser = async(req: Request, res: Response, next: NextFunction) => {
-  const user = await sql`
-    SELECT * FROM users
-    WHERE user_id = ${req.params.id}
-  `
-  if (!user) {
-    return next(new ErrorResponse('User not found', 404));
+  try {
+    const user = await sql`
+      SELECT * FROM users
+      WHERE user_id = ${req.params.id}
+    `
+    if (!user) {
+      return next(new ErrorResponse('User not found', StatusCodes.NOT_FOUND));
+    }
+  
+    const response = new BaseResponse(StatusCodes.OK, 'success', user)
+    return res.status(response.status).json(response);
+  } catch (error) {
+    next(error);    
+  }
+}
+
+export const updateUser = async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const validation = updateUserRequestSchema.parse(req.body);
+    const {email} = validation;
+
+    const user = await sql`
+      SELECT * FROM users
+      WHERE user_id = ${req.params.id}
+    `
+    if (!user) {
+      return next(new ErrorResponse('User not found', StatusCodes.NOT_FOUND));
+    }
+  
+    const updatedUser = await sql`
+      UPDATE users
+      SET email = ${email}
+      WHERE user_id = ${req.params.id}
+      RETURNING *
+    `
+    const response = new BaseResponse(StatusCodes.OK, 'Updated User', updatedUser)
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return next(error);
   }
 
-  const response = new BaseResponse(200, 'success', user)
-  return res.status(response.status).json(response);
 }

@@ -10,12 +10,12 @@ import { ErrorResponse } from '../../models/Response';
 
 export const Route = createFileRoute('/(landing-page)/home')({
   beforeLoad: async({context}) => {
-
+    const cookieName = import.meta.env.VITE_COOKIE_NAME;
     // if cookie exists, check if the session is valid
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [cookie, _, removeCookie ] = context.cookie;
 
-    if ((cookie as Record<string, string>)['connect.sid']) {
+    if ((cookie as Record<string, string>)[cookieName]) {
       const {AxiosGET} = context.axios
       const response = await AxiosGET('/check-session')  
       if (response.status === 200) {
@@ -23,7 +23,7 @@ export const Route = createFileRoute('/(landing-page)/home')({
           to: '/dashboard'
         })
       } else {
-        removeCookie('connect.sid')
+        removeCookie(cookieName)
       }
     } 
   },
@@ -386,7 +386,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
             e.preventDefault();
             const {username, password, email} = registerFormValue;
             const response = await register(username, password, email);
-            (response as ErrorResponse).status !== 200 ? clearForm() : undefined;
+            (response as unknown as ErrorResponse).status !== 200 ? clearForm() : undefined;
             }} className="btn self-end">
             Register
           </button>

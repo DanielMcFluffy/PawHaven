@@ -18,12 +18,13 @@ export const useAuth = () => {
   }
 
   const getUser = () => {
-    return JSON.parse(sessionStorage.getItem('user')!)
+    return JSON.parse(sessionStorage.getItem('user')!) as User
   }
 
   const clearUser = () => {
+    const cookieName = import.meta.env.VITE_COOKIE_NAME;
     sessionStorage.removeItem('user');
-    removeCookie('connect.sid')
+    removeCookie(cookieName)
   }
 
   const login = async(username: string, password: string) => {

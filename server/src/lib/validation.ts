@@ -22,5 +22,11 @@ export const loginRequestSchema = z.object({
       .regex(/[^A-Za-z0-9]/, {message: 'Password must contain at least one special character'}),
 })
 
+export const updateUserRequestSchema = z.object({
+  email: z.string({message: 'Email is required'})
+    .email({message: 'Invalid email'})
+})
+
 export type TRegisterRequest = z.infer<typeof registerRequestSchema>;
 export type TLoginRequest = z.infer<typeof loginRequestSchema>;
+export type TUpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
