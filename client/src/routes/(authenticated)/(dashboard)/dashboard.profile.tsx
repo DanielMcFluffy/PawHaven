@@ -49,14 +49,15 @@ function Profile() {
       const response = await AxiosPOST('/users/', {email: editUserFormValue.email}, user.user_id);
       if (response.status === 200) {
         toast.success('Admin Updated');
-        return setIsEditing(false);
+      } else if (response.status === 202) {
+        toast.info('No changes');
       } else {
         setEditUserFormValue({
           ...editUserFormValue,
           email: user.email,
         });
-        return setIsEditing(false);
       }
+      return setIsEditing(false);
     }
   }
 
@@ -65,8 +66,11 @@ function Profile() {
       <div 
         className='flex flex-col gap-8 h-full'>
           <div 
-            className='self-center'>
-            profile image
+            className='flex flex-col items-center bg-slate-50 sm:bg-3 w-full p-4 rounded-md'>
+            <ProfilePhoto />
+            <span
+              className='mb-[-6px] font-info text-xs sm:font-2'
+            >Verify to add photo</span>
           </div>
           <div 
             className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -136,7 +140,7 @@ function Profile() {
                 </button>}
               </div>
             <div 
-              className='text-left w-full flex flex-col gap-4'>
+              className='text-left w-full flex flex-col gap-4 flex-1'>
               <div
                 className='font-info text-xs'>id: {user.user_id}</div>
               <div
@@ -144,6 +148,35 @@ function Profile() {
               <div
                 className='font-info text-xs'>Registered: {new Date(user.created_at).toLocaleDateString()}</div>
             </div>
+          </div>
+      </div>
+    </>
+  )
+}
+
+const ProfilePhoto = () => {
+  const editOverlay = React.useRef<HTMLDivElement>(null);
+
+  return(
+    <>
+      <div
+        onMouseEnter={() => {
+          editOverlay.current!.style.backgroundColor = '#000000';
+          editOverlay.current!.style.opacity = '0.4';
+        }}
+        onMouseLeave={() => {
+          editOverlay.current!.style.backgroundColor = 'unset';
+          editOverlay.current!.style.opacity = '0';
+        }} 
+        className='relative overflow-hidden rounded-full hover:cursor-pointer'>
+        <img 
+          src="/default-pfp.webp" 
+          alt="default-pfp" 
+          className='h-[80px]'/>
+          <div
+            ref={editOverlay} 
+            className='absolute bottom-0 right-1/2 translate-x-1/2 bg-black bg-opacity-40 sm:hover:bg-black sm:hover:bg-opacity-40 w-full text-center font-2 text-sm transition-all ease-in-out'>
+            Edit
           </div>
       </div>
     </>
