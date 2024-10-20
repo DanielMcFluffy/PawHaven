@@ -1,4 +1,4 @@
-export type Pets = {
+export type Pet = {
   pet_id: string;
   name: string;
   breed: string;

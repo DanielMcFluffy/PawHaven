@@ -75,8 +75,8 @@ export const login = async(req: Request, res: Response, next: NextFunction) => {
 
 export const register = async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const validation = registerRequestSchema.parse(req.body)
-    const {username, password, email} = validation;
+    const validatedRequest = registerRequestSchema.parse(req.body)
+    const {username, password, email} = validatedRequest;
 
   if (!username || !password || !email) {
     return next(new ErrorResponse('Please fill all required fields', StatusCodes.BAD_REQUEST));

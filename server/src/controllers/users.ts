@@ -41,8 +41,8 @@ export const getUser = async(req: Request, res: Response, next: NextFunction) =>
 
 export const updateUser = async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const validation = updateUserRequestSchema.parse(req.body);
-    const {email} = validation;
+    const validatedRequest = updateUserRequestSchema.parse(req.body);
+    const {email} = validatedRequest;
 
     const user = await sql`
       SELECT * FROM users
