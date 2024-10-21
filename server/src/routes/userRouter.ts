@@ -2,19 +2,19 @@ import express from 'express';
 import { getUser, getUsers, updateUser } from '../controllers/users';
 import { sessionAuth } from '../middlewares/sessionAuth';
 
-export const usersRouter = express.Router();
+export const userRouter = express.Router();
 
-usersRouter.use(sessionAuth);
+userRouter.use(sessionAuth);
 
-usersRouter
+userRouter
   .route('/users')
   .get(getUsers);
 
-usersRouter
+userRouter
   .route('/users/:id')
   .get(getUser);
 
-usersRouter
+userRouter
   .route('/users/:id')
   .post(updateUser);
 

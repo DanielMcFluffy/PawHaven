@@ -7,7 +7,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { authRouter } from "./routes/authRouter";
 import { errorHandler } from "./middlewares/error";
-import { usersRouter } from "./routes/usersRouter";
+import { medicineRouter } from "./routes/medicineRouter";
+import { userRouter } from "./routes/userRouter";
 
 configDotenv({path: ".././config/config.env"})  
 
@@ -45,8 +46,8 @@ app.get('/data', (req: Request, res: Response) => {
   console.log('authenticated', req.isAuthenticated());
   console.log(req.cookies);
 })
-app.use('/', usersRouter)
-
+app.use('/', userRouter);
+app.use('/', medicineRouter);
 
 app.use(errorHandler);
 

@@ -27,6 +27,23 @@ export const updateUserRequestSchema = z.object({
     .email({message: 'Invalid email'})
 })
 
+export const updateMedicineRequestSchema = z.object({
+  medicine: z.object({
+   name: z.string({message: 'Medicine name cannot be blank'}),
+   type: z.string({message: 'Medicine type cannot be blank'}),
+   pronounciation: z.string({message: 'Medicine type cannot be blank'}), 
+  }),
+  medicineDetail: z.object({
+    'Uses/Indications': z.string({message: 'Medicine detail (Uses/Indications) cannot be blank'}).optional(),
+    'Pharmacology/Actions': z.string({message: 'Medicine detail (Pharmacology/Actions) cannot be blank'}).optional(),
+    'Pharmacokinetics': z.string({message: 'Medicine detail (Pharmacokinetics) cannot be blank'}).optional(),
+    'Contraindications/Precautions/Warnings': z.string({message: 'Medicine detail (Contraindications/Precautions/Warnings) cannot be blank'}).optional(),
+    'Adverse Effects': z.string({message: 'Medicine detail (Adverse Effects) cannot be blank'}).optional(),
+    'Reproductive/Nursing Safety': z.string({message: 'Medicine detail (Reproductive/Nursing Safety) cannot be blank'}).optional(), 
+    'Overdosage/Acute Toxicity': z.string({message: 'Medicine detail (Overdosage/Acute Toxicity) cannot be blank'}).optional(), 
+  })
+})
+
 export type TRegisterRequest = z.infer<typeof registerRequestSchema>;
 export type TLoginRequest = z.infer<typeof loginRequestSchema>;
 export type TUpdateUserRequest = z.infer<typeof updateUserRequestSchema>;

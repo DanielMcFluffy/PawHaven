@@ -19,7 +19,8 @@ function Medicines() {
 
     const getData = async() => {
       const response = await AxiosGET('/users/');
-      setData((response as BaseResponse<User[]>).result)
+      setData((response as BaseResponse<User[]>).result);
+      await AxiosGET('/medicines/')
     }
     getData();
   // eslint-disable-next-line react-hooks/exhaustive-deps

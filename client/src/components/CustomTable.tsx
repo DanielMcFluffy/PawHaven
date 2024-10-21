@@ -56,9 +56,10 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
+            <tr key={row.id} onClick={() => console.log(row.id)}>
               {row.getVisibleCells().map(cell => (
-                <td key={cell.id}>
+                <td 
+                  key={cell.id}>
                   {flexRender(
                     cell.column.columnDef.cell,
                     cell.getContext()
