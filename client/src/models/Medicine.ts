@@ -7,9 +7,11 @@ export type Medicine = {
 & Partial<Record<MedicineDetails, string>>
 
 export type MedicineName = {
-  name: string;
-  pronounciation: string;
-  type: string;
+  medicine: {
+    name: string;
+    pronounciation: string;
+    type: string;
+  }
 }
 export type MedicineDetails = 
 | 'Uses/Indications'

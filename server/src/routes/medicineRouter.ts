@@ -1,6 +1,6 @@
 import express from 'express';
 import { sessionAuth } from '../middlewares/sessionAuth';
-import { getMedicine, getMedicines, updateMedicine } from '../controllers/medicine';
+import { deleteMedicine, getMedicine, getMedicines, updateMedicine } from '../controllers/medicine';
 
 export const medicineRouter = express.Router();
 
@@ -17,4 +17,8 @@ medicineRouter
 medicineRouter
   .route('/medicine/:id')
   .post(updateMedicine);
+
+medicineRouter
+  .route('/medicine/:id')
+  .post(deleteMedicine);
 

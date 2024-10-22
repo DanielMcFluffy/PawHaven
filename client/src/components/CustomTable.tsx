@@ -39,8 +39,19 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
   })
 
   return(<>
-    <table>
-    <thead>
+  <div 
+    className="inline-flex flex-col gap-4 bg-slate-100 rounded-2xl p-4 shadow-md">
+    <header 
+      className="sticky left-[1.5rem] w-max">
+        <input 
+          type="text"
+          placeholder='Search ...'
+          className='px-4 py-2 rounded-xl shadow-md focus-visible:outline-none'
+        />
+    </header>
+    <table
+      className="border-collapse">
+      <thead>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
@@ -56,9 +67,11 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr key={row.id} onClick={() => console.log(row.id)}>
+            <tr key={row.id}
+              className="">
               {row.getVisibleCells().map(cell => (
                 <td 
+                  className="p-2"
                   key={cell.id}>
                   {flexRender(
                     cell.column.columnDef.cell,
@@ -70,5 +83,6 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           ))}
         </tbody>
     </table>
+  </div>
   </>)
 }

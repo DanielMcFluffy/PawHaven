@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { User } from '../../../models/User';
 import { ColumnDef } from '@tanstack/react-table';
 import React from 'react';
 import { useAxios } from '../../../hooks/useAxios';
 import { BaseResponse } from '../../../models/Response';
 import { CustomTable } from '../../../components/CustomTable';
+import { Medicine } from '../../../models/Medicine';
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/medicines')({
   component: Medicines,
@@ -13,14 +13,14 @@ export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/med
 function Medicines() {
 
   const {AxiosGET} = useAxios();
-  const [data, setData] = React.useState<User[]>([]);
+  const [data, setData] = React.useState<Medicine[]>([]);
 
   React.useEffect(() => {
 
     const getData = async() => {
-      const response = await AxiosGET('/users/');
-      setData((response as BaseResponse<User[]>).result);
-      await AxiosGET('/medicines/')
+      const response = await AxiosGET('/medicines/')
+      setData((response as BaseResponse<Medicine[]>).result);
+      
     }
     getData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -28,29 +28,37 @@ function Medicines() {
   
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const columns: ColumnDef<User, any>[] = React.useMemo(() => ([
+  const columns: ColumnDef<Medicine, any>[] = React.useMemo(() => ([
     {
-      header: 'Username',
-      accessorKey: 'username'
+      header: 'Name',
+      accessorFn: (row) => row.medicine.name,
+      id: 'name'
     },
     {
-      header: 'Email',
-      accessorKey: 'email'
-    }
+      header: 'Type',
+      accessorFn: (row) => row.medicine.type,
+      id: 'type',
+    },
+    {
+      header: 'Pronounciation',
+      accessorFn: (row) => row.medicine.pronounciation,
+      id: 'pronounciation',
+    },
+    {
+      header: 'ID',
+      accessorKey: 'medicine_id',
+    },
   ]), []);
 
 
   return (
     <>
       <div className='flex flex-col gap-6'>
-        <header className='flex justify-start'>
-          <input 
-            type="text"
-            placeholder='Search ...'
-            className='px-4 py-2 rounded-xl shadow-md focus-visible:outline-none'
-          />
+        <header className='inline-flex w-max justify-start sticky left-[1.5rem]'>
+          A header
         </header>
-        <section>
+        <section 
+          >
           <CustomTable 
             columns={columns}
             data={data}/>
