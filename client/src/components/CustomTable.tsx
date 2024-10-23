@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
 import { User } from "../models/User";
 import { Medicine } from "../models/Medicine";
 import { Admin } from "../models/Admin";
@@ -6,7 +6,6 @@ import { Veterinarian } from "../models/Veterinarian";
 import { Case } from "../models/Case";
 import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
-
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
 
@@ -35,23 +34,27 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       isVeterinarian(row) ? row.vet_id :
       isCase(row) ? row.case_id :
       row.medicine_id,
-    getCoreRowModel: getCoreRowModel()
+      getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      globalFilterFn: 'auto',
   })
 
   return(<>
   <div 
-    className="inline-flex flex-col gap-4 bg-slate-100 rounded-2xl p-4 shadow-md">
+    className="inline-flex flex-col gap-4 bg-slate-100 rounded-2xl p-4">
     <header 
       className="sticky left-[1.5rem] w-max">
         <input 
+          onChange={e => table.setGlobalFilter(String(e.target.value))}
           type="text"
           placeholder='Search ...'
           className='px-4 py-2 rounded-xl shadow-md focus-visible:outline-none'
         />
     </header>
-    <table
-      className="border-collapse">
-      <thead>
+    {data.length > 0 ? <table
+      className="border-collapse overflow-hidden rounded-xl shadow-md">
+      <thead 
+        className="bg-2">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
@@ -82,7 +85,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
             </tr>
           ))}
         </tbody>
-    </table>
+    </table> : <span>Loading ...</span> }
   </div>
   </>)
 }

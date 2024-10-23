@@ -1,0 +1,15 @@
+NODE_ENV=
+VITE_NODE_ENV=
+PORT=
+SECRET=
+CONNECTION_STRING=
+DB_HOST=
+DB_NAME=
+DB_PORT=
+DB_USER=
+DB_PASSWORD=
+SALT_ROUNDS=
+VITE_BASE_URL=
+VITE_COOKIE_NAME=
+CLIENT_URL=
+//Replace the extension of this .txt to .env to setup environment variables

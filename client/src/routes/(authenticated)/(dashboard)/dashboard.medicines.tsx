@@ -53,7 +53,7 @@ function Medicines() {
 
   return (
     <>
-      <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-6 overflow-auto sm:overflow-visible'>
         <header className='inline-flex w-max justify-start sticky left-[1.5rem]'>
           A header
         </header>
