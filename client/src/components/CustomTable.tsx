@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getFilteredRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
 import { User } from "../models/User";
 import { Medicine } from "../models/Medicine";
 import { Admin } from "../models/Admin";
@@ -6,6 +6,7 @@ import { Veterinarian } from "../models/Veterinarian";
 import { Case } from "../models/Case";
 import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
 
@@ -37,11 +38,12 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       globalFilterFn: 'auto',
+      getSortedRowModel: getSortedRowModel(),
   })
 
   return(<>
   <div 
-    className="inline-flex flex-col gap-4 bg-slate-100 rounded-2xl p-4">
+    className="inline-flex flex-col gap-4 rounded-2xl p-4">
     <header 
       className="sticky left-[1.5rem] w-max">
         <input 
@@ -56,20 +58,38 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       <thead 
         className="bg-2">
           {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
+            <tr
+              key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                    )}
+                <th
+                  className="px-3 py-2 cursor-pointer select-none"
+                  onClick={() => header.column.toggleSorting()}
+                  key={header.id}>
+                    <div
+                      className="flex gap-4 justify-center items-center">
+                      <div 
+                        >
+                        {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                        )} 
+                      </div> 
+                      <div>
+                        {
+                          header.column.getIsSorted() === 'asc' ? 
+                          <FaArrowUp /> : header.column.getIsSorted() === 'desc' ?
+                          <FaArrowDown /> : <div className="min-w-[1em]"></div>
+                        }
+                      </div>
+                    </div>
                 </th>
               ))}
             </tr>
           ))}
         </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
+        <tbody 
+          className="bg-slate-50 sm:bg-inherit">
+          {table.getFilteredRowModel().rows.length > 0 ? table.getRowModel().rows.map(row => (
             <tr key={row.id}
               className="">
               {row.getVisibleCells().map(cell => (
@@ -83,9 +103,19 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
                 </td>
               ))}
             </tr>
-          ))}
+          )) : 
+          <tr>
+            <td colSpan={table.getCoreRowModel().flatRows.length}>
+              <span 
+                className="p-4">The term you've searched doesn't exist!</span>
+            </td>
+          </tr>
+          }
         </tbody>
-    </table> : <span>Loading ...</span> }
+    </table> :
+    table.getRowModel().flatRows.length === 0 ?
+    <span>Loading ...</span> : ''
+    }
   </div>
   </>)
 }
