@@ -18,12 +18,12 @@ function Dashboard() {
 
   return(
     <>
-    <div className='flex flex-col bg-0 h-max overflow-auto sm:overflow-visible'>
+    <div className='flex flex-col bg-0'>
       <Toolbar />
-      <main className='flex h-full'>
+      <main className='flex h-dvh'>
         <Sidebar 
         /> 
-        <section className='h-full sm:w-full min-h-dvh pb-[15ch] pt-4 px-4 sm:py-4 sm:px-6 bg-slate-200 sm:bg-slate-50 sm:rounded-tl-xl sm:rounded-bl-xl shadow-md sm:overflow-auto w-full sm:min-w-[unset]'><Outlet /></section>
+        <section className='w-full pb-[11ch] pt-4 px-4 sm:py-4 sm:px-6 bg-slate-200 sm:bg-slate-50 sm:rounded-tl-xl sm:rounded-bl-xl shadow-md sm:min-w-[unset] overflow-auto'><Outlet /></section>
       </main>
       <Navbar 
       />

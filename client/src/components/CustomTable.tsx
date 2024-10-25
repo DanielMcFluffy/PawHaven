@@ -43,26 +43,33 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
 
   return(<>
   <div 
-    className="inline-flex flex-col gap-4 rounded-2xl p-4">
+    className="inline-flex flex-col gap-4 rounded-2xl px-2 min-h-fit">
     <header 
-      className="sticky left-[1.5rem] w-max">
+      className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-16">
         <input 
           onChange={e => table.setGlobalFilter(String(e.target.value))}
           type="text"
           placeholder='Search ...'
           className='px-4 py-2 rounded-xl shadow-md focus-visible:outline-none'
         />
+        <div 
+          className="flex gap-4">
+          <button>Add</button>
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
     </header>
-    {data.length > 0 ? <table
-      className="border-collapse overflow-hidden rounded-xl shadow-md">
+      {
+        data.length > 0 ? <table
+      className="border-collapse rounded-xl shadow-md">
       <thead 
-        className="bg-2">
+        className="bg-2 sticky top-[-1rem]">
           {table.getHeaderGroups().map(headerGroup => (
             <tr
               key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <th
-                  className="px-3 py-2 cursor-pointer select-none"
+                  className="px-3 py-2 cursor-pointer select-none first:rounded-tl-xl last:rounded-tr-xl"
                   onClick={() => header.column.toggleSorting()}
                   key={header.id}>
                     <div
@@ -115,7 +122,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
     </table> :
     table.getRowModel().flatRows.length === 0 ?
     <span>Loading ...</span> : ''
-    }
+      }
   </div>
   </>)
 }
