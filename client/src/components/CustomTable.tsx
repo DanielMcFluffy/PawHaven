@@ -45,7 +45,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
   <div 
     className="inline-flex flex-col gap-4 rounded-2xl px-2 min-h-fit">
     <header 
-      className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-16">
+      className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-10">
         <input 
           onChange={e => table.setGlobalFilter(String(e.target.value))}
           type="text"
@@ -57,6 +57,11 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           <button>Add</button>
           <button>Edit</button>
           <button>Delete</button>
+        </div>
+        <div>
+          <button>
+            More
+          </button>
         </div>
     </header>
       {
