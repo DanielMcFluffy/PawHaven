@@ -9,8 +9,8 @@ import { updateMedicineRequestSchema } from "../lib/validation";
 export const getMedicines = async(req: Request, res: Response, next: NextFunction) => {
   try {
     const medicines = await sql`
-      SELECT * FROM medicines 
-      LIMIT 5
+      SELECT * FROM medicines
+      WHERE NOT (medicine->>'name' = 'No information provided')
     `
     if (!medicines.length) {
       return next(new ErrorResponse('No medicines found', StatusCodes.NOT_FOUND));

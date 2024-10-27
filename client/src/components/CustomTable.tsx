@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
 import { User } from "../models/User";
 import { Medicine } from "../models/Medicine";
 import { Admin } from "../models/Admin";
@@ -7,6 +7,7 @@ import { Case } from "../models/Case";
 import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { Paginator } from "./Paginator";
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
 
@@ -23,6 +24,10 @@ export const CustomTable = <
 T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
 >({data, columns}: TableProps<T>) => {
 
+  const pagination = {
+    pageIndex: 0,
+    pageSize: 20
+  }
   const table = useReactTable({
     data,
     columns,
@@ -39,6 +44,10 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       getFilteredRowModel: getFilteredRowModel(),
       globalFilterFn: 'auto',
       getSortedRowModel: getSortedRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      initialState: {
+        pagination
+      }
   })
 
   return(<>
@@ -124,6 +133,17 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           </tr>
           }
         </tbody>
+        <Paginator 
+          dataLength={data.length}
+          getCanPreviousPage={table.getCanPreviousPage}
+          getCanNextPage={table.getCanNextPage}
+          previousPage={table.previousPage}
+          nextPage={table.nextPage}
+          firstPage={table.firstPage}
+          lastPage={table.lastPage}
+          pageSize={pagination.pageSize}
+          setPageSize={table.setPageSize}
+          />
     </table> :
     table.getRowModel().flatRows.length === 0 ?
     <span>Loading ...</span> : ''
