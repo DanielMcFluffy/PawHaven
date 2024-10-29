@@ -2,7 +2,6 @@ import { Updater } from "@tanstack/react-table";
 import React from "react";
 import { IconType } from "react-icons";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { log, pageArray } from "../utils";
 
 export type PaginatorProps = {
     dataLength: number;
@@ -29,39 +28,67 @@ export const Paginator = ({
     pageSize,
     setPageSize
 }: PaginatorProps) => {
-    const numberedButtons = React.useMemo(() => {
-        if (pageSize <= 0 || dataLength <= 0) return [];
+    // const numberedButtons = React.useMemo(() => {
+    //     if (pageSize <= 0 || dataLength <= 0) return [];
 
-        const roundedPageCount = Math.ceil(dataLength / pageSize);
-        return pageArray(roundedPageCount);
-    }, [dataLength, pageSize]);
-    log(setPageIndex);
+    //     const roundedPageCount = Math.ceil(dataLength / pageSize);
+    //     return pageArray(roundedPageCount);
+    // }, [dataLength, pageSize]);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const roundedPageCount = React.useMemo(() => Math.ceil(dataLength / pageSize), [dataLength, pageSize])
+
+    const goToNextPage = () => {
+        if (!getCanNextPage()) {return;}
+        nextPage();
+        setCurrentPage(currentPage + 1);
+    }
+    const goToPreviousPage = () => {
+        if (!getCanPreviousPage()) {return;}
+        previousPage();
+        setCurrentPage(currentPage - 1);
+    }
+    const goToFirstPage = () => {
+        if (!getCanPreviousPage()) {return;}
+        firstPage();
+        setCurrentPage(1);
+    }
+    const goToLastPage = () => {
+        if (!getCanNextPage()) {return;}
+        lastPage();
+        setCurrentPage(roundedPageCount);
+    }
     return(
         <>
             <div 
                 className="sticky left-[1.5rem] py-4 flex">
-               {dataLength}
                 <PaginatorButton 
+                    disabled={!getCanPreviousPage()}
                     icon={FaAngleDoubleLeft}
-                    callback={firstPage}/>
+                    callback={goToFirstPage}/>
                 <PaginatorButton 
                     disabled={!getCanPreviousPage()}
                     icon={FaAngleLeft}
-                    callback={previousPage}/>
-                {
+                    callback={goToPreviousPage}/>
+                {/* {
                     numberedButtons.map((x, i) => 
                     <PaginatorButton 
                         key={i}
                         label={x}
+                        updaterNumber={i}
+                        updater={setPageIndex}
                         />)
+                } */}
+                {
+                    `Page ${currentPage} out of ${roundedPageCount}`
                 }
                 <PaginatorButton 
                     disabled={!getCanNextPage()}
                     icon={FaAngleRight}
-                    callback={nextPage}/>
+                    callback={goToNextPage}/>
                 <PaginatorButton 
+                    disabled={!getCanNextPage()}
                     icon={FaAngleDoubleRight}
-                    callback={lastPage}/>
+                    callback={goToLastPage}/>
             </div>
         </>
     )
@@ -71,15 +98,25 @@ type PaginatorButtonProps = {
     icon?: IconType;
     label?: number;
     callback?: () => void;
+    updaterNumber?: number;
+    updater?: (updater: Updater<number>) => void;
     disabled?: boolean;
 }
-const PaginatorButton = ({icon, label, callback, disabled = false}: PaginatorButtonProps) => {
+const PaginatorButton = ({icon, label, callback, updaterNumber, updater, disabled = false}: PaginatorButtonProps) => {
+
+    const handleClick = () => {
+        if (callback) {
+            callback();
+        } else if (updater && updaterNumber !== undefined) {
+            updater(updaterNumber);
+        }
+    };
     return(
         <>
             <button
                 disabled={disabled}
-                className="bg-slate-50 p-2 solid outline outline-blue-500"
-                onClick={callback}>
+                className="bg-slate-50 p-4 solid outline outline-blue-500"
+                onClick={handleClick}>
                 {label ? label : React.createElement(icon!)}
             </button>
         </>

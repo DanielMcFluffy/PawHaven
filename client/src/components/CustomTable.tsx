@@ -26,7 +26,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
 
   const pagination = {
     pageIndex: 0,
-    pageSize: 20
+    pageSize: 20,
   }
   const table = useReactTable({
     data,
@@ -141,6 +141,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           nextPage={table.nextPage}
           firstPage={table.firstPage}
           lastPage={table.lastPage}
+          setPageIndex={table.setPageIndex}
           pageSize={pagination.pageSize}
           setPageSize={table.setPageSize}
           />
