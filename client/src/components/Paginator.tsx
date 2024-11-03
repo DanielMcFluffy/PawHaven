@@ -28,14 +28,9 @@ export const Paginator = ({
     pageSize,
     setPageSize
 }: PaginatorProps) => {
-    // const numberedButtons = React.useMemo(() => {
-    //     if (pageSize <= 0 || dataLength <= 0) return [];
-
-    //     const roundedPageCount = Math.ceil(dataLength / pageSize);
-    //     return pageArray(roundedPageCount);
-    // }, [dataLength, pageSize]);
     const [currentPage, setCurrentPage] = React.useState(1);
     const roundedPageCount = React.useMemo(() => Math.ceil(dataLength / pageSize), [dataLength, pageSize])
+    const pageInputRef = React.useRef<HTMLInputElement>(null);
 
     const goToNextPage = () => {
         if (!getCanNextPage()) {return;}
@@ -57,10 +52,34 @@ export const Paginator = ({
         lastPage();
         setCurrentPage(roundedPageCount);
     }
+
+    const pageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+    
+        const inputValue = e.target.value;
+        if (!inputValue) {
+            setCurrentPage(1);
+            return setPageIndex(1);
+        }
+    
+        const pageNumber = parseInt(inputValue);
+        if (isNaN(pageNumber) || pageNumber < 1) {
+            setCurrentPage(1);
+            return setPageIndex(1);
+        } else if (pageNumber >= roundedPageCount) {
+            setCurrentPage(roundedPageCount);
+            return setPageIndex(roundedPageCount - 1);
+        }
+    
+        setCurrentPage(pageNumber);
+        setPageIndex(pageNumber);
+    };
     return(
-        <>
+        <>  
+        <div
+            className="sticky left-[1.5rem] flex gap-4 items-center">
             <div 
-                className="sticky left-[1.5rem] py-4 flex">
+                className="py-4 flex">
                 <PaginatorButton 
                     disabled={!getCanPreviousPage()}
                     icon={FaAngleDoubleLeft}
@@ -69,18 +88,6 @@ export const Paginator = ({
                     disabled={!getCanPreviousPage()}
                     icon={FaAngleLeft}
                     callback={goToPreviousPage}/>
-                {/* {
-                    numberedButtons.map((x, i) => 
-                    <PaginatorButton 
-                        key={i}
-                        label={x}
-                        updaterNumber={i}
-                        updater={setPageIndex}
-                        />)
-                } */}
-                {
-                    `Page ${currentPage} out of ${roundedPageCount}`
-                }
                 <PaginatorButton 
                     disabled={!getCanNextPage()}
                     icon={FaAngleRight}
@@ -90,7 +97,29 @@ export const Paginator = ({
                     icon={FaAngleDoubleRight}
                     callback={goToLastPage}/>
             </div>
-        </>
+            <div
+                className="flex flex-col gap-2 w-max items-center">
+                <div
+                    className="">
+                    <label htmlFor="pageIndex">Page: </label>
+                    <input
+                        name="pageIndex"
+                        id="pageIndex"
+                        className="input w-14 shadow-md text-center" 
+                        type="text"
+                        ref={pageInputRef}
+                        onFocus={() => pageInputRef.current?.select()}
+                        onClick={() => pageInputRef.current?.select()}
+                        value={currentPage}
+                        onChange={pageChange}/>
+                </div>
+                <div
+                    className="text-nowrap text-center w-full">
+                    {`${currentPage} out of ${roundedPageCount}`}
+                </div>
+            </div>
+        </div>
+    </>
     )
 }
 
