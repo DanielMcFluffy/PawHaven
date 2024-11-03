@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, TableOptions, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, TableOptions, useReactTable } from "@tanstack/react-table";
 import { User } from "../models/User";
 import { Medicine } from "../models/Medicine";
 import { Admin } from "../models/Admin";
@@ -8,6 +8,8 @@ import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { Paginator } from "./Paginator";
+import React from "react";
+
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
 
@@ -24,10 +26,11 @@ export const CustomTable = <
 T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
 >({data, columns}: TableProps<T>) => {
 
-  const pagination = {
+  const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 20,
-  }
+    pageSize: 5
+  })
+
   const table = useReactTable({
     data,
     columns,
@@ -45,7 +48,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       globalFilterFn: 'auto',
       getSortedRowModel: getSortedRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
-      initialState: {
+      state: {
         pagination
       }
   })
@@ -142,8 +145,9 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           firstPage={table.firstPage}
           lastPage={table.lastPage}
           setPageIndex={table.setPageIndex}
-          pageSize={pagination.pageSize}
           setPageSize={table.setPageSize}
+          pagination={pagination}
+          setPagination={setPagination}
           />
     </table> :
     table.getRowModel().flatRows.length === 0 ?

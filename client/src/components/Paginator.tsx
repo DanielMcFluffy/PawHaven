@@ -1,4 +1,4 @@
-import { Updater } from "@tanstack/react-table";
+import { PaginationState, Updater } from "@tanstack/react-table";
 import React from "react";
 import { IconType } from "react-icons";
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from "react-icons/fa";
@@ -12,8 +12,9 @@ export type PaginatorProps = {
     firstPage: () => void;
     lastPage: () => void;
     setPageIndex: (updater: Updater<number>) => void;
-    pageSize: number;
     setPageSize: (updater: Updater<number>) => void;
+    pagination: PaginationState;
+    setPagination: React.Dispatch<React.SetStateAction<PaginationState>>
 }
 
 export const Paginator = ({
@@ -25,32 +26,44 @@ export const Paginator = ({
     firstPage,
     lastPage,
     setPageIndex,
-    pageSize,
-    setPageSize
+    setPageSize,
+    pagination,
+    setPagination
 }: PaginatorProps) => {
-    const [currentPage, setCurrentPage] = React.useState(1);
-    const roundedPageCount = React.useMemo(() => Math.ceil(dataLength / pageSize), [dataLength, pageSize])
+    const roundedPageCount = React.useMemo(() => Math.ceil(dataLength / pagination.pageSize), [dataLength, pagination.pageSize])
     const pageInputRef = React.useRef<HTMLInputElement>(null);
 
     const goToNextPage = () => {
         if (!getCanNextPage()) {return;}
         nextPage();
-        setCurrentPage(currentPage + 1);
+        setPagination(x => ({
+            ...x,
+            pageIndex: x.pageIndex + 1
+        }));
     }
     const goToPreviousPage = () => {
         if (!getCanPreviousPage()) {return;}
         previousPage();
-        setCurrentPage(currentPage - 1);
+        setPagination(x => ({
+            ...x,
+            pageIndex: x.pageIndex - 1
+        }));
     }
     const goToFirstPage = () => {
         if (!getCanPreviousPage()) {return;}
         firstPage();
-        setCurrentPage(1);
+        setPagination(x => ({
+            ...x,
+            pageIndex: 0
+        }));
     }
     const goToLastPage = () => {
         if (!getCanNextPage()) {return;}
         lastPage();
-        setCurrentPage(roundedPageCount);
+        setPagination(x => ({
+            ...x,
+            pageIndex: roundedPageCount - 1
+        }));
     }
 
     const pageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,26 +71,48 @@ export const Paginator = ({
     
         const inputValue = e.target.value;
         if (!inputValue) {
-            setCurrentPage(1);
+            setPagination(x => ({
+                ...x,
+                pageIndex: 0
+            }));
             return setPageIndex(1);
         }
     
         const pageNumber = parseInt(inputValue);
         if (isNaN(pageNumber) || pageNumber < 1) {
-            setCurrentPage(1);
+            setPagination(x => ({
+                ...x,
+                pageIndex: 0
+            }));
             return setPageIndex(1);
         } else if (pageNumber >= roundedPageCount) {
-            setCurrentPage(roundedPageCount);
+            setPagination(x => ({
+                ...x,
+                pageIndex: roundedPageCount - 1
+            }));
             return setPageIndex(roundedPageCount - 1);
         }
     
-        setCurrentPage(pageNumber);
+            setPagination(x => ({
+                ...x,
+                pageIndex: pageNumber - 1
+            }));
         setPageIndex(pageNumber);
     };
+
+    const pageSizechange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const pageSize = parseInt(e.target.value);
+
+        setPageSize(pageSize);
+        setPagination(() => ({
+            pageIndex: 0,
+            pageSize
+        }))
+    }
     return(
         <>  
         <div
-            className="sticky left-[1.5rem] flex gap-4 items-center">
+            className="sticky left-[1rem] flex gap-4 items-center text-xs">
             <div 
                 className="py-4 flex">
                 <PaginatorButton 
@@ -110,13 +145,27 @@ export const Paginator = ({
                         ref={pageInputRef}
                         onFocus={() => pageInputRef.current?.select()}
                         onClick={() => pageInputRef.current?.select()}
-                        value={currentPage}
+                        value={pagination.pageIndex + 1}
                         onChange={pageChange}/>
                 </div>
                 <div
                     className="text-nowrap text-center w-full">
-                    {`${currentPage} out of ${roundedPageCount}`}
+                    {`${pagination.pageIndex + 1} out of ${roundedPageCount}`}
                 </div>
+            </div>
+            <div
+                className="flex flex-col gap-2">
+            <label htmlFor="pageSize"
+                className="text-nowrap">Page Size:</label>
+                <select 
+                    name="pageSize" 
+                    id="pageSize"
+                    onChange={pageSizechange}
+                    className="w-full input text-wrap">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select>
             </div>
         </div>
     </>
