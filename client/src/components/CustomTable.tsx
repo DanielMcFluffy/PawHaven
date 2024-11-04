@@ -9,6 +9,7 @@ import { Pet } from "../models/Pet";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { Paginator } from "./Paginator";
 import React from "react";
+import { Dropdown } from "./Dropdown";
 
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
@@ -30,6 +31,14 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
     pageIndex: 0,
     pageSize: 5
   })
+
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const toggleDropdown = () => {
+    if (!isDropdownOpen) {
+      return;
+    }
+    return setIsDropdownOpen(false);
+  }
 
   const table = useReactTable({
     data,
@@ -54,10 +63,11 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
   })
 
   return(<>
-  <div 
+  <div
+    onClick={toggleDropdown}
     className="inline-flex flex-col gap-4 rounded-2xl px-2 min-h-fit">
     <header 
-      className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-10">
+      className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-10 z-10">
         <input 
           onChange={e => table.setGlobalFilter(String(e.target.value))}
           type="text"
@@ -70,12 +80,18 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           <button>Edit</button>
           <button>Delete</button>
         </div>
-        <div>
-          <button>
-            More
+        <div
+          >
+          <button
+            onClick={() => setIsDropdownOpen(x => !x)}
+            className="relative">
+            Visibility
+            {isDropdownOpen && 
+            <Dropdown 
+              columns={table.getAllColumns()}/>}
           </button>
         </div>
-    </header>
+        </header>
       {
         data.length > 0 ? <table
       className="border-collapse rounded-xl shadow-md">
