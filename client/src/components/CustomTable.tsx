@@ -7,6 +7,7 @@ import { Case } from "../models/Case";
 import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
 import { Paginator } from "./Paginator";
 import React from "react";
 import { Dropdown } from "./Dropdown";
@@ -31,7 +32,6 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
     pageIndex: 0,
     pageSize: 5
   })
-
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const toggleDropdown = () => {
     if (!isDropdownOpen) {
@@ -39,6 +39,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
     }
     return setIsDropdownOpen(false);
   }
+
 
   const table = useReactTable({
     data,
@@ -62,10 +63,29 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       }
   })
 
+  const headers = React.useMemo(() => columns.map(x => x.header), [columns])
+
+  const [currentMobileHeader, setCurrentMobileHeader] = React.useState<typeof headers[number]>(headers[0]);
+
+  const goToNextMobileHeader = () => {
+    const currentIndex = headers.indexOf(currentMobileHeader);
+    if (currentIndex === headers.length - 1) {
+      return setCurrentMobileHeader(headers[0]);
+    }
+    return setCurrentMobileHeader(headers[currentIndex + 1]);
+  }
+  const goToPreviousMobileHeader = () => {
+    const currentIndex = headers.indexOf(currentMobileHeader);
+    if (currentIndex === 0) {
+      return setCurrentMobileHeader(headers[headers.length - 1]);
+    }
+    return setCurrentMobileHeader(headers[currentIndex - 1]);
+  }
+
   return(<>
   <div
     onClick={toggleDropdown}
-    className="inline-flex flex-col gap-4 rounded-2xl px-2 min-h-fit">
+    className="inline-flex flex-col w-full gap-4 rounded-2xl px-2 min-h-fit">
     <header 
       className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-10 z-10">
         <input 
@@ -93,79 +113,169 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
         </div>
         </header>
       {
-        data.length > 0 ? <table
-      className="border-collapse rounded-xl shadow-md">
-      <thead 
-        className="bg-2 sticky top-[-1rem]">
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr
-              key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th
-                  className="px-3 py-2 cursor-pointer select-none first:rounded-tl-xl last:rounded-tr-xl"
-                  onClick={() => header.column.toggleSorting()}
-                  key={header.id}>
-                    <div
-                      className="flex gap-4 justify-center items-center">
-                      <div 
-                        >
-                        {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                        )} 
-                      </div> 
-                      <div>
-                        {
-                          header.column.getIsSorted() === 'asc' ? 
-                          <FaArrowUp /> : header.column.getIsSorted() === 'desc' ?
-                          <FaArrowDown /> : <div className="min-w-[1em]"></div>
-                        }
+        data.length > 0 ? 
+        (<>
+      <table
+        className="hidden sm:table bg-inherit border-collapse rounded-xl shadow-md">
+        <thead 
+          className="bg-2 sticky top-[-1rem]">
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr
+                key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th
+                    className="px-3 py-2 cursor-pointer select-none first:rounded-tl-xl last:rounded-tr-xl"
+                    onClick={() => header.column.toggleSorting()}
+                    key={header.id}>
+                      <div
+                        className="flex gap-4 justify-center items-center">
+                        <div 
+                          >
+                          {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                          )} 
+                        </div> 
+                        <div>
+                          {
+                            header.column.getIsSorted() === 'asc' ? 
+                            <FaArrowUp /> : header.column.getIsSorted() === 'desc' ?
+                            <FaArrowDown /> : <div className="min-w-[1em]"></div>
+                          }
+                        </div>
                       </div>
-                    </div>
-                </th>
-              ))}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody 
+            className="bg-inherit">
+            {table.getFilteredRowModel().rows.length > 0 ? table.getRowModel().rows.map(row => (
+              <tr 
+                key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <td 
+                    className="p-2"
+                    key={cell.id}>
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                  </td>
+                ))}
+              </tr>
+            )) : 
+            <tr>
+              <td colSpan={table.getCoreRowModel().flatRows.length}>
+                <span 
+                  className="p-4">The term you've searched doesn't exist!</span>
+              </td>
             </tr>
-          ))}
-        </thead>
-        <tbody 
-          className="bg-slate-50 sm:bg-inherit">
-          {table.getFilteredRowModel().rows.length > 0 ? table.getRowModel().rows.map(row => (
-            <tr key={row.id}
-              className="">
-              {row.getVisibleCells().map(cell => (
-                <td 
-                  className="p-2"
-                  key={cell.id}>
-                  {flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
-                  )}
-                </td>
-              ))}
+            }
+          </tbody>
+          <Paginator 
+            dataLength={data.length}
+            getCanPreviousPage={table.getCanPreviousPage}
+            getCanNextPage={table.getCanNextPage}
+            previousPage={table.previousPage}
+            nextPage={table.nextPage}
+            firstPage={table.firstPage}
+            lastPage={table.lastPage}
+            setPageIndex={table.setPageIndex}
+            setPageSize={table.setPageSize}
+            pagination={pagination}
+            setPagination={setPagination}
+            />
+      </table>
+      {/* // mobile table */}
+      <table
+        className="sm:hidden bg-slate-100 border-collapse rounded-xl shadow-md">
+        <thead 
+          className="sticky top-[-1rem] select-none">
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr
+                className="bg-2 rounded-tl-xl rounded-tr-xl flex justify-between px-4"
+                key={headerGroup.id}>
+                <button
+                  onClick={goToPreviousMobileHeader}>
+                  <RiArrowLeftWideFill />
+                </button>
+                {headerGroup.headers.map(header => (
+                  header.column.columnDef.header === currentMobileHeader ?
+                  <th
+                    className="px-3 py-2 cursor-pointer select-none first:rounded-tl-xl last:rounded-tr-xl"
+                    onClick={() => header.column.toggleSorting()}
+                    key={header.id}>
+                      <div
+                        className="flex gap-4 justify-center items-center">
+                        <div 
+                          >
+                          {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                          )} 
+                        </div> 
+                        <div>
+                          {
+                            header.column.getIsSorted() === 'asc' ? 
+                            <FaArrowUp /> : header.column.getIsSorted() === 'desc' ?
+                            <FaArrowDown /> : <div className="min-w-[1em]"></div>
+                          }
+                        </div>
+                      </div>
+                  </th> : undefined
+                ))}
+                <button
+                  onClick={goToNextMobileHeader}>
+                  <RiArrowRightWideFill />
+                </button>
+              </tr>
+            ))}
+          </thead>
+          <tbody 
+            >
+            {table.getFilteredRowModel().rows.length > 0 ? table.getRowModel().rows.map(row => (
+              <tr 
+                key={row.id}>
+                {row.getVisibleCells().map(cell => ( 
+                  cell.column.columnDef.header === currentMobileHeader ? 
+                  <td 
+                    className="p-2"
+                    key={cell.id}>
+                    {
+                      flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )
+                    }
+                  </td> : undefined
+                  ))}
+              </tr>
+            )) : 
+            <tr>
+              <td colSpan={table.getCoreRowModel().flatRows.length}>
+                <span 
+                  className="p-4">The term you've searched doesn't exist!</span>
+              </td>
             </tr>
-          )) : 
-          <tr>
-            <td colSpan={table.getCoreRowModel().flatRows.length}>
-              <span 
-                className="p-4">The term you've searched doesn't exist!</span>
-            </td>
-          </tr>
-          }
-        </tbody>
-        <Paginator 
-          dataLength={data.length}
-          getCanPreviousPage={table.getCanPreviousPage}
-          getCanNextPage={table.getCanNextPage}
-          previousPage={table.previousPage}
-          nextPage={table.nextPage}
-          firstPage={table.firstPage}
-          lastPage={table.lastPage}
-          setPageIndex={table.setPageIndex}
-          setPageSize={table.setPageSize}
-          pagination={pagination}
-          setPagination={setPagination}
-          />
-    </table> :
+            }
+          </tbody>
+          <Paginator 
+            dataLength={data.length}
+            getCanPreviousPage={table.getCanPreviousPage}
+            getCanNextPage={table.getCanNextPage}
+            previousPage={table.previousPage}
+            nextPage={table.nextPage}
+            firstPage={table.firstPage}
+            lastPage={table.lastPage}
+            setPageIndex={table.setPageIndex}
+            setPageSize={table.setPageSize}
+            pagination={pagination}
+            setPagination={setPagination}
+            />
+      </table>
+  </>) :
     table.getRowModel().flatRows.length === 0 ?
     <span>Loading ...</span> : ''
       }
