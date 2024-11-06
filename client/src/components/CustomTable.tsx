@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, TableOptions, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getExpandedRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, TableOptions, useReactTable } from "@tanstack/react-table";
 import { User } from "../models/User";
 import { Medicine } from "../models/Medicine";
 import { Admin } from "../models/Admin";
@@ -8,9 +8,11 @@ import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { Paginator } from "./Paginator";
 import React from "react";
 import { Dropdown } from "./Dropdown";
+import { ReactNode } from "@tanstack/react-router";
 
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
@@ -57,6 +59,8 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       getFilteredRowModel: getFilteredRowModel(),
       globalFilterFn: 'auto',
       getSortedRowModel: getSortedRowModel(),
+      getRowCanExpand: () => true,
+      getExpandedRowModel: getExpandedRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
       state: {
         pagination
@@ -85,7 +89,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
   return(<>
   <div
     onClick={toggleDropdown}
-    className="inline-flex flex-col w-full gap-4 rounded-2xl px-2 min-h-fit">
+    className="inline-flex flex-col w-full sm:w-[unset] gap-4 rounded-2xl px-2 min-h-fit">
     <header 
       className="sticky left-[1.5rem] w-max grid grid-rows-2 sm:grid-rows-1 sm:grid-flow-col items-center gap-y-4 sm:gap-x-10 z-10">
         <input 
@@ -238,17 +242,58 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
             {table.getFilteredRowModel().rows.length > 0 ? table.getRowModel().rows.map(row => (
               <tr 
                 key={row.id}>
-                {row.getVisibleCells().map(cell => ( 
+                {row.getVisibleCells().map(cell => (
                   cell.column.columnDef.header === currentMobileHeader ? 
                   <td 
-                    className="p-2"
                     key={cell.id}>
-                    {
-                      flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )
-                    }
+                      <div
+                        onClick={() => row.toggleExpanded()}
+                        className="flex justify-between gap-4 p-2 hover:bg-slate-300">
+                        <div>
+                          {
+                            flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )
+                          }
+                        </div>
+                        <button>
+                          {
+                            row.getIsExpanded() ?
+                            <IoMdArrowDropup /> :
+                            <IoMdArrowDropdown />
+                          }
+                        </button>
+                      </div>
+                      {
+                        row.getIsExpanded() &&
+                        <td
+                          colSpan={row.getAllCells().length}
+                          className="flex flex-col overflow-auto items-center gap-2 p-4 bg-slate-200">
+                            <div
+                              className="font-bold text-sm">
+                              {row.getVisibleCells()[0].renderValue() as ReactNode}
+                            </div>
+                            <div
+                              className="grid grid-cols-2 gap-x-8 gap-y-4 text-xs">
+                                {
+                                  row.getVisibleCells().map(x => (
+                                    <div
+                                      className="flex flex-col gap-1">
+                                      <div
+                                        className="font-bold">
+                                        {x.column.columnDef.header as ReactNode}:
+                                      </div>
+                                      
+                                      <div>
+                                        {x.renderValue() as ReactNode}
+                                      </div>
+                                    </div>
+                                  ))
+                                }
+                            </div>
+                        </td>
+                      }
                   </td> : undefined
                   ))}
               </tr>

@@ -112,9 +112,9 @@ export const Paginator = ({
     return(
         <>  
         <div
-            className="sticky left-[1rem] flex gap-4 items-center text-xs">
+            className="sticky left-[1rem] flex justify-around sm:w-[400px] py-4 gap-4 items-center text-xs">
             <div 
-                className="py-4 flex">
+                className="flex">
                 <PaginatorButton 
                     disabled={!getCanPreviousPage()}
                     icon={FaAngleDoubleLeft}
@@ -193,7 +193,7 @@ const PaginatorButton = ({icon, label, callback, updaterNumber, updater, disable
         <>
             <button
                 disabled={disabled}
-                className="bg-slate-50 p-4 solid outline outline-blue-500"
+                className="bg-slate-50 p-4 sm:p-2 solid outline outline-blue-500"
                 onClick={handleClick}>
                 {label ? label : React.createElement(icon!)}
             </button>
