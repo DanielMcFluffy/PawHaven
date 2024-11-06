@@ -2,11 +2,11 @@ import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router'
 import { CiMenuBurger } from "react-icons/ci";
 import { FaEyeSlash, FaRegEye  } from "react-icons/fa";
 import { createPortal } from 'react-dom';
-import { loginFormValidation, registerFormValidation, TLoginForm, TRegisterForm } from '../../utils/validation';
-import { validateFormWithZod } from '../../utils/validateFormWithZod';
+import { loginFormValidation, registerFormValidation } from '../../utils/validation';
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { ErrorResponse } from '../../models/Response';
+import { useForm } from '../../hooks/useForm';
 
 export const Route = createFileRoute('/(landing-page)/home')({
   beforeLoad: async({context}) => {
@@ -174,21 +174,21 @@ type AuthModalProps = {
 const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setShowRegisterModal}: AuthModalProps) => {
   const {login, register} = useAuth();
 
-  const [loginFormValue, setLoginFormValue] = React.useState<TLoginForm>({
-    username: '',
-    password: ''
-  })
-  const [registerFormValue, setRegisterFormValue] = React.useState<TRegisterForm>({
-    username: '',
-    password: '',
-    email: '',
-  })
-  
-  const loginFormResult = validateFormWithZod(loginFormValidation, loginFormValue);
-  const registerFormResult = validateFormWithZod(registerFormValidation, registerFormValue);
-  
-  const { error: loginError, formattedError: loginErrorMessage } = loginFormResult;
-  const { error: registerError, formattedError: registerErrorMessage } = registerFormResult;
+  const {
+    formValue: loginFormValue,
+    setFormValue: setLoginFormValue,
+    onChangeHandler: loginFormOnChangeHandler,
+    error: loginError,
+    formattedError: loginErrorMessage
+  } = useForm(loginFormValidation);
+
+  const {
+    formValue: registerFormValue,
+    setFormValue: setRegisterFormValue,
+    onChangeHandler: registerFormOnChangeHandler,
+    error: registerError,
+    formattedError: registerErrorMessage
+  } = useForm(registerFormValidation);
   
   const [usernameTouched, setUsernameTouched] = React.useState(false);
   const [passwordTouched, setPasswordTouched] = React.useState(false);
@@ -228,8 +228,9 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
           className='flex flex-col gap-2'
           onSubmit={e =>{
             e.preventDefault();
+            if (!loginFormValue) {return;}
             const {username, password} = loginFormValue;
-            login(username, password);
+            return login(username, password);
           }}
         >
           <div className='flex flex-col gap-1'>
@@ -243,7 +244,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               placeholder='John Doe'
               onBlur={() => setUsernameTouched(true)}
               value={loginFormValue.username}
-              onChange={(e) => setLoginFormValue(x => ({...x, username: e.target.value}))}
+              onChange={e => loginFormOnChangeHandler(e, 'username')}
             />
             { loginError && usernameTouched && <div
                 className='text-xs text-red-500 ml-2'
@@ -267,7 +268,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
                   setPasswordTouched(true);
                 }}
                 value={loginFormValue.password}
-                onChange={(e) => setLoginFormValue(x => ({...x, password: e.target.value}))}
+                onChange={e => loginFormOnChangeHandler(e, 'password')}
               />
               <button type='button' onClick={() => setShowPassword(x => !x)}>
                 {showPassword ? <FaRegEye/> : <FaEyeSlash/>}
@@ -326,7 +327,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               placeholder='John Doe'
               onBlur={() => setUsernameTouched(true)}
               value={registerFormValue.username}
-              onChange={(e) => setRegisterFormValue(x => ({...x, username: e.target.value}))}
+              onChange={e => registerFormOnChangeHandler(e, 'username')}
             />
               { registerError && usernameTouched && <div
                 className='text-xs text-red-500 ml-2'
@@ -351,7 +352,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
                   setPasswordTouched(true);
                 }}
                 value={registerFormValue.password}
-                onChange={(e) => setRegisterFormValue(x => ({...x, password: e.target.value}))}
+                onChange={e => registerFormOnChangeHandler(e, 'password')}
               />
               <button type='button' onClick={() => setShowPassword(x => !x)}>
                 {showPassword ? <FaRegEye/> : <FaEyeSlash/>}
@@ -373,7 +374,7 @@ const AuthModal = ({showLoginModal, setShowLoginModal, showRegisterModal, setSho
               type="email"
               placeholder='John@Doe.com'
               value={registerFormValue.email}
-              onChange={(e) => setRegisterFormValue(x => ({...x, email: e.target.value}))}
+              onChange={e => registerFormOnChangeHandler(e, 'email')}
               onBlur={() => setEmailTouched(true)}
             />
               { registerError && emailTouched && <div

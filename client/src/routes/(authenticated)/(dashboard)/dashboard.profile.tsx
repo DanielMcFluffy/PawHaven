@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import React from 'react';
-import { editUserFormValidation, TEditUserForm } from '../../../utils/validation';
-import { validateFormWithZod } from '../../../utils/validateFormWithZod';
+import { editUserFormValidation } from '../../../utils/validation';
 import { log } from '../../../utils';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../../hooks/useAuth';
 import { useAxios } from '../../../hooks/useAxios';
+import { useForm } from '../../../hooks/useForm';
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/profile')({
   component: Profile,
@@ -17,13 +17,18 @@ function Profile() {
   const {getUser} = useAuth();
   const user = getUser();
 
-  const [editUserFormValue, setEditUserFormValue] = React.useState<TEditUserForm>({
-    username: user.username,
-    email: user.email
+  const {
+    formValue: editUserFormValue,
+    setFormValue: setEditUserFormValue,
+    onChangeHandler: editUserFormOnChangeHandler,
+    error,
+    formattedError,
+    success, 
+  } = useForm(editUserFormValidation, {
+    email: user.email,
+    username: user.username
   });
 
-  const editUserFormResult = validateFormWithZod(editUserFormValidation, editUserFormValue);
-  const {error, formattedError, success} = editUserFormResult;
 
   const [usernameTouched, setUsernameTouched] = React.useState(false);
   const [emailTouched, setEmailTouched] = React.useState(false);
@@ -89,7 +94,7 @@ function Profile() {
                   className='input shadow-sm w-full'
                   onBlur={() => setUsernameTouched(true)}
                   value={editUserFormValue.username}
-                  onChange={(e) => setEditUserFormValue(x => ({...x, username: e.target.value}))}
+                  onChange={e => editUserFormOnChangeHandler(e, 'username')}
                   disabled={true} />
                 { error && usernameTouched && <div
                   className='text-xs text-red-500 ml-2'
@@ -112,7 +117,7 @@ function Profile() {
                   placeholder='john@email.com'
                   className='input shadow-sm w-full'
                   value={editUserFormValue.email}
-                  onChange={(e) => setEditUserFormValue(x => ({...x, email: e.target.value}))}
+                  onChange={e => editUserFormOnChangeHandler(e, 'email')}
                   onBlur={() => setEmailTouched(true)}
                   disabled={!isEditing} />
                 { error && emailTouched && <div
