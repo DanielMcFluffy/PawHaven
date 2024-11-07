@@ -6,14 +6,14 @@ import { Veterinarian } from "../models/Veterinarian";
 import { Case } from "../models/Case";
 import { PetOwner } from "../models/PetOwner";
 import { Pet } from "../models/Pet";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaPlus, FaRegMinusSquare, FaEdit, FaFilter } from "react-icons/fa";
 import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { Paginator } from "./Paginator";
 import React from "react";
 import { Dropdown } from "./Dropdown";
 import { ReactNode } from "@tanstack/react-router";
-
+import { useTooltip } from "../hooks/useTooltip";
 
 type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
 
@@ -29,7 +29,6 @@ const isCase = (entity: unknown): entity is Case => (entity as Case).vet_id !== 
 export const CustomTable = <
 T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
 >({data, columns}: TableProps<T>) => {
-
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5
@@ -41,7 +40,6 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
     }
     return setIsDropdownOpen(false);
   }
-
 
   const table = useReactTable({
     data,
@@ -86,6 +84,33 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
     return setCurrentMobileHeader(headers[currentIndex - 1]);
   }
 
+  const {
+    ref: addButtonRef,
+    showTooltip: showAddButtonTooltip,
+    hideTooltip: hideAddButtonTooltip,
+    TooltipElement: addButtonTooltipElement
+  } = useTooltip<HTMLButtonElement>('Add row');
+
+  const {
+    ref: deleteButtonRef,
+    showTooltip: showDeleteButtonTooltip,
+    hideTooltip: hideDeleteButtonTooltip,
+    TooltipElement: deleteButtonTooltipElement
+  } = useTooltip<HTMLButtonElement>('Delete row');
+
+  const {
+    ref: editButtonRef,
+    showTooltip: showEditButtonTooltip,
+    hideTooltip: hideEditButtonTooltip,
+    TooltipElement: editButtonTooltipElement
+  } = useTooltip<HTMLButtonElement>('Edit row');
+
+  const {
+    ref: filterButtonRef,
+    showTooltip: showFilterButtonTooltip,
+    hideTooltip: hideFilterButtonTooltip,
+    TooltipElement: filterButtonTooltipElement
+  } = useTooltip<HTMLButtonElement>('Filter columns');
   return(<>
   <div
     onClick={toggleDropdown}
@@ -100,20 +125,46 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
         />
         <div 
           className="flex gap-4">
-          <button>Add</button>
-          <button>Edit</button>
-          <button>Delete</button>
-        </div>
-        <div
-          >
           <button
+            ref={addButtonRef}
+            onMouseEnter={showAddButtonTooltip}
+            onMouseLeave={hideAddButtonTooltip}
+            className="rounded-md bg-white shadow-md px-4 py-2 hover:bg-slate-100">
+            <FaPlus />
+          </button>
+          {addButtonTooltipElement}
+
+          <button
+            ref={deleteButtonRef}
+            onMouseEnter={showDeleteButtonTooltip}
+            onMouseLeave={hideDeleteButtonTooltip}
+            className="rounded-md bg-white shadow-md px-4 py-2 hover:bg-slate-100">
+            <FaRegMinusSquare />
+          </button>
+          {deleteButtonTooltipElement}
+
+          <button
+            ref={editButtonRef}
+            onMouseEnter={showEditButtonTooltip}
+            onMouseLeave={hideEditButtonTooltip}
+            className="rounded-md bg-white shadow-md px-4 py-2 hover:bg-slate-100">
+            <FaEdit />
+          </button>
+          {editButtonTooltipElement}
+        </div>
+        <div>
+          <button
+            ref={filterButtonRef}
+            onMouseEnter={showFilterButtonTooltip}
+            onMouseLeave={hideFilterButtonTooltip}
             onClick={() => setIsDropdownOpen(x => !x)}
-            className="relative">
-            Visibility
+            className="relative rounded-md bg-white shadow-md px-4 py-2 hover:bg-slate-100">
+              <FaFilter />
             {isDropdownOpen && 
             <Dropdown 
               columns={table.getAllColumns()}/>}
           </button>
+          {filterButtonTooltipElement}
         </div>
         </header>
       {
