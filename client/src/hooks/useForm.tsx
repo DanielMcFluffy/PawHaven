@@ -14,6 +14,22 @@ export const useForm = <T extends ZodRawShape>(schema: ZodObject<T>, initialValu
     z.infer<typeof schema>
     >(initialFormValue);
 
+    const initialTouchedValue = Object.keys(schema.shape).reduce((acc, key) => {
+        (acc as Record<string, boolean>)[key] = false;
+        return acc
+    }, {} as Record<keyof z.infer<typeof schema>, boolean>)
+
+    const [formInputsTouched, setFormInputsTouched] = React.useState<Record<keyof z.infer<typeof schema>, boolean>>(initialTouchedValue);
+   
+    const resetFormInputsTouched = () => setFormInputsTouched(initialTouchedValue);
+    const onBlurHandler = (
+        property: keyof z.infer<typeof schema>
+    ) => {
+        setFormInputsTouched(x => ({
+            ...x as Record<keyof z.infer<typeof schema>, boolean>,
+            [property]: true
+        }))
+    }
     const onChangeHandler = (
         e: React.ChangeEvent<HTMLInputElement>,
         property: keyof z.infer<typeof schema>
@@ -26,5 +42,15 @@ export const useForm = <T extends ZodRawShape>(schema: ZodObject<T>, initialValu
     const {success, error, data} = schema.safeParse(formValue);
     const formattedError = error?.format();
     
-    return {formValue, setFormValue, onChangeHandler, success, error, formattedError, data};
+    return {
+        formValue, 
+        setFormValue,
+        formInputsTouched,
+        resetFormInputsTouched,
+        onBlurHandler,
+        onChangeHandler, 
+        success, 
+        error, 
+        formattedError, 
+        data};
 }

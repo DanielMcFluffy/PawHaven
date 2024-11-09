@@ -152,7 +152,8 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
           </button>
           {editButtonTooltipElement}
         </div>
-        <div>
+        <div
+          className="hidden sm:inline-block">
           <button
             ref={filterButtonRef}
             onMouseEnter={showFilterButtonTooltip}
