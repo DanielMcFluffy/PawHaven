@@ -174,17 +174,29 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       <table
         className="hidden sm:table bg-inherit border-collapse rounded-xl shadow-md">
         <thead 
-          className="bg-2 sticky top-[-1rem]">
+          className="sticky top-[-1rem]">
             {table.getHeaderGroups().map(headerGroup => (
               <tr
                 key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <th
-                    className="px-3 py-2 cursor-pointer select-none first:rounded-tl-xl last:rounded-tr-xl"
-                    onClick={() => header.column.toggleSorting()}
+                {headerGroup.headers.map(header => ( 
+                  header.id !== 'select' ?
+                  (<th
+                    className="bg-2 px-3 py-2 select-none first:rounded-tl-xl last:rounded-tr-xl first:flex"
                     key={header.id}>
+                        {
+                          table
+                            .getAllLeafColumns()
+                            .indexOf(header.column)
+                          === 1 ?
+                          flexRender(
+                            table.getFlatHeaders()[0].column.columnDef.header,
+                            header.getContext()
+                          ) :
+                          undefined
+                        }
                       <div
-                        className="flex gap-4 justify-center items-center">
+                        onClick={() => header.column.toggleSorting()}
+                        className="flex gap-4 justify-center items-center cursor-pointer">
                         <div 
                           >
                           {flexRender(
@@ -200,8 +212,9 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
                           }
                         </div>
                       </div>
-                  </th>
-                ))}
+                  </th>) :
+                  null
+                 ))}
               </tr>
             ))}
           </thead>
@@ -211,14 +224,29 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
               <tr 
                 key={row.id}>
                 {row.getVisibleCells().map(cell => (
+                  cell.column.id !== 'select' ?
                   <td 
-                    className="p-2"
+                    className="p-2 align-baseline"
                     key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
-                  </td>
+                        {
+                          table
+                            .getAllLeafColumns()
+                            .indexOf(cell.column)
+                          === 1 ?
+                          flexRender(
+                            table.getAllLeafColumns()[0].columnDef.cell,
+                            cell.getContext()
+                          ) :
+                          undefined
+                        }
+                        {
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )
+                        }
+                  </td> :
+                  null
                 ))}
               </tr>
             )) : 

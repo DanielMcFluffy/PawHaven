@@ -5,6 +5,7 @@ import { useAxios } from '../../../hooks/useAxios';
 import { BaseResponse } from '../../../models/Response';
 import { CustomTable } from '../../../components/CustomTable';
 import { Medicine } from '../../../models/Medicine';
+import { IndeterminateCheckbox } from '../../../components/IndeterminateCheckbox';
 
 export const Route = createFileRoute('/(authenticated)/(dashboard)/dashboard/medicines')({
   component: Medicines,
@@ -29,6 +30,31 @@ function Medicines() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: ColumnDef<Medicine, any>[] = React.useMemo(() => ([
+    {
+      id: 'select',
+      header: (context) => {
+        const table = context?.table;
+        return table ? (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        ) : null;
+      },
+      cell: ({ row }) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+      ),
+    },
     {
       header: 'Name',
       accessorFn: (row) => row.medicine.name,

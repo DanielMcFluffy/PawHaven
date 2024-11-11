@@ -12,7 +12,7 @@ export const useTooltip = <T extends HTMLElement>(message: string) => {
             const { top, left, height } = ref.current.getBoundingClientRect();
             setTooltipPosition({
                 top: top + height + window.scrollY,
-                left: left + window.scrollX,
+                left: left + window.scrollX + 25,
             });
         }
     };

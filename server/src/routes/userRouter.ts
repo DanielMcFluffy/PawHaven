@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUser, getUsers, updateUser } from '../controllers/users';
+import { deleteUser, getUser, getUsers, updateUser } from '../controllers/users';
 import { sessionAuth } from '../middlewares/sessionAuth';
 
 export const userRouter = express.Router();
@@ -18,3 +18,6 @@ userRouter
   .route('/users/:id')
   .post(updateUser);
 
+userRouter
+  .route('/users/:id')
+  .delete(deleteUser);

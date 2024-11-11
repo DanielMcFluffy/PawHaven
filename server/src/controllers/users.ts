@@ -68,5 +68,26 @@ export const updateUser = async(req: Request, res: Response, next: NextFunction)
   } catch (error) {
     return next(error);
   }
+}
 
+export const deleteUser = async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await sql`
+      SELECT * FROM users
+      WHERE user_id = ${req.params.id}
+    ` as unknown as User[];
+    if (user.length === 0) {
+      return next(new ErrorResponse('User not found', StatusCodes.NOT_FOUND));
+    }
+
+    const deletedUser = await sql`
+      DELETE * FROM users
+      WHERE user_id = ${user[0].user_id} 
+    `;
+
+    const response = new BaseResponse(StatusCodes.OK, 'Deleted User', deletedUser);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return next(error);
+  }
 }
