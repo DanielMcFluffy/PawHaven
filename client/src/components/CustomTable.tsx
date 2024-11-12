@@ -165,7 +165,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
             ref={selectButtonRef}
             onMouseEnter={showSelectButtonTooltip}
             onMouseLeave={hideSelectButtonTooltip}
-            className={`rounded-md shadow-md px-4 py-2 hover:bg-slate-100 ${isMobileSelectModeOn ? 'bg-slate-200' : 'bg-white'}`}>
+            className={`sm:hidden rounded-md shadow-md px-4 py-2 hover:bg-slate-100 ${isMobileSelectModeOn ? 'bg-slate-200' : 'bg-white'}`}>
             <FaThList />
           </button>
           {SelectButtonTooltipElement}
@@ -311,15 +311,10 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
                     className="flex px-3 py-2 cursor-pointer select-none first:rounded-tl-xl last:rounded-tr-xl"
                     key={header.id}>
                         { isMobileSelectModeOn &&
-                          table
-                            .getAllLeafColumns()
-                            .indexOf(header.column)
-                          === 1 ?
                           flexRender(
                             table.getFlatHeaders()[0].column.columnDef.header,
                             header.getContext()
-                          ) :
-                          undefined
+                          )
                         }
                       <div
                         onClick={() => header.column.toggleSorting()}
@@ -361,15 +356,10 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
                         className="flex justify-between gap-4 p-2 hover:bg-slate-300">
                         <div>
                         { isMobileSelectModeOn &&
-                          table
-                            .getAllLeafColumns()
-                            .indexOf(cell.column)
-                          === 1 ?
                           flexRender(
                             table.getAllLeafColumns()[0].columnDef.cell,
                             cell.getContext()
-                          ) :
-                          undefined
+                          )
                         }
                           {
                             flexRender(
