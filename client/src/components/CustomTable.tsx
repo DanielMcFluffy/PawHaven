@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getExpandedRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, TableOptions, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getExpandedRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, TableOptions, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { User } from "../models/User";
 import { Medicine } from "../models/Medicine";
 import { Admin } from "../models/Admin";
@@ -15,7 +15,10 @@ import { Dropdown } from "./Dropdown";
 import { ReactNode } from "@tanstack/react-router";
 import { useTooltip } from "../hooks/useTooltip";
 
-type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'>
+type TableProps<TData> = Pick<TableOptions<TData>, 'data' | 'columns'> & 
+{
+  initialColumns: Record<string, boolean>
+}
 
 //type guards
 const isUser = (entity: unknown): entity is User => (entity as User).user_id !== undefined;
@@ -28,7 +31,7 @@ const isCase = (entity: unknown): entity is Case => (entity as Case).vet_id !== 
 
 export const CustomTable = <
 T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
->({data, columns}: TableProps<T>) => {
+>({data, columns, initialColumns}: TableProps<T>) => {
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5
@@ -53,16 +56,20 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
       isVeterinarian(row) ? row.vet_id :
       isCase(row) ? row.case_id :
       row.medicine_id,
-      getCoreRowModel: getCoreRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-      globalFilterFn: 'auto',
-      getSortedRowModel: getSortedRowModel(),
-      getRowCanExpand: () => true,
-      getExpandedRowModel: getExpandedRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      state: {
-        pagination
-      }
+    renderFallbackValue: 'N/A',
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: 'auto',
+    getSortedRowModel: getSortedRowModel(),
+    getRowCanExpand: () => true,
+    getExpandedRowModel: getExpandedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination
+    },
+    initialState: {
+      columnVisibility: initialColumns ? initialColumns as VisibilityState : undefined
+    }
   })
 
   const headers = React.useMemo(() => columns.map(x => x.header), [columns])
@@ -181,7 +188,8 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
               <FaFilter />
             {isDropdownOpen && 
             <Dropdown 
-              columns={table.getAllColumns()}/>}
+            // slice starts at index 1 to not consider the select column
+              columns={table.getAllColumns().slice(1)}/>} 
           </button>
           {FilterButtonTooltipElement}
         </div>
@@ -199,7 +207,7 @@ T extends User | Admin | PetOwner | Pet | Veterinarian | Case | Medicine
                 {headerGroup.headers.map(header => ( 
                   header.id !== 'select' ?
                   (<th
-                    className="bg-2 px-3 py-2 select-none first:rounded-tl-xl last:rounded-tr-xl first:flex"
+                    className="bg-2 px-3 py-2 select-none text-nowrap first:rounded-tl-xl last:rounded-tr-xl first:flex"
                     key={header.id}>
                         {
                           table

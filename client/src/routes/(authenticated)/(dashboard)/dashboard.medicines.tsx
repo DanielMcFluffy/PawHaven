@@ -70,13 +70,52 @@ function Medicines() {
       accessorFn: (row) => row.medicine.pronounciation,
       id: 'pronounciation',
     },
+    // TODO: Clean up this data
+    //
+    // {
+    //   header: 'Adverse Effects',
+    //   accessorKey: 'Adverse Effects',
+    //   id: 'Adverse Effects',
+    // },
+    // {
+    //   header: 'Contraindications/Precautions/Warnings',
+    //   accessorKey: 'Contraindications/Precautions/Warnings',
+    //   id: 'Contraindications/Precautions/Warnings',
+    // },
+    // {
+    //   header: 'Overdosage/Acute Toxicity',
+    //   accessorKey: 'Overdosage/Acute Toxicity',
+    //   id: 'Contraindications/Precautions/Warnings',
+    // },
+    // {
+    //   header: 'Pharmacokinetics',
+    //   accessorKey: 'Pharmacokinetics',
+    //   id: 'Pharmacokinetics',
+    // },
     {
       header: 'ID',
       accessorKey: 'medicine_id',
+      id: 'medicine_id',
+    },
+    {
+      header: 'Updated At',
+      accessorKey: 'updated_at',
+      id: 'updated_at',
+    },
+    {
+      header: 'Created At',
+      accessorKey: 'created_at',
+      id: 'created_at',
     },
   ]), []);
 
-
+  const initialColumns = React.useMemo(() => ( 
+    {
+      'medicine_id': false,
+      'created_at': false,
+      'updated_at': false,
+    }
+   ), [])
   return (
     <>
       <div className='flex flex-col gap-6'>
@@ -87,6 +126,7 @@ function Medicines() {
           >
           <CustomTable 
             columns={columns}
+            initialColumns={initialColumns}
             data={data}/>
         </section>
       </div>

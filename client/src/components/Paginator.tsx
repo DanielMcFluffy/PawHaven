@@ -193,7 +193,7 @@ const PaginatorButton = ({icon, label, callback, updaterNumber, updater, disable
         <>
             <button
                 disabled={disabled}
-                className="bg-slate-50 p-4 sm:p-2 solid outline outline-blue-500"
+                className="bg-slate-50 p-4 sm:p-2 solid outline outline-blue-500 hover:bg-slate-200 disabled:text-slate-400"
                 onClick={handleClick}>
                 {label ? label : React.createElement(icon!)}
             </button>
